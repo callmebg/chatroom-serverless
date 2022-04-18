@@ -1,7 +1,5 @@
 const state = {
   sysUsers: '' || JSON.parse(window.localStorage.getItem('sysusers')),
-  isToCoArtBoard: false, // 是否在白板协作
-  // isAudioOrVideo: false, // 是否正在语音通话或者视频通话
   isVideoing: false,
   isAudioing: false,
   currentConversation: {}, // 当前的会话，在白板协作、音视频通话会使用
@@ -17,9 +15,6 @@ const mutations = {
     state.sysUsers = data
     const dataStr = JSON.stringify(data)
     window.localStorage.setItem('sysusers', dataStr)
-  },
-  setIsToCoArtBoard(state, data) {
-    state.isToCoArtBoard = data
   },
   setIsAudioing(state, data) {
     state.isAudioing = data
@@ -70,12 +65,6 @@ const mutations = {
 const actions = {
   SET_SYS_USERS({commit}, data) {
     commit('setSysUsers', data)
-  },
-  SET_ISTOCOARTBOARD({commit}, data) {
-    commit('setIsToCoArtBoard', data)
-  },
-  SET_IS_AUDIOING({commit}, data) {
-    commit('setIsAudioing', data)
   },
   SET_IS_VIDEOING({commit}, data) {
     commit('setIsVideoing', data)

@@ -1,6 +1,7 @@
 <template>
   <div class="copyright-cmp">
     <p class="copyright-item">Copyright©2022-{{endTime}}</p>
+    <p class="copyright-item">毕设冲冲冲！！！</p>
   </div>
 </template>
 

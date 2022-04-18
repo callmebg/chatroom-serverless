@@ -5,7 +5,8 @@ import store from './../store'
 Vue.use(Router)
 
 const router = new Router({
-  routes: [{
+  routes: [
+    {
       path: '/',
       redirect: '/chat',
       meta: {
@@ -15,7 +16,7 @@ const router = new Router({
     {
       path: '/login',
       name: 'Login',
-      component: () => import("@/views/Login"),
+      component: () => import('@/views/Login'),
       meta: {
         deepth: 0.5
       }
@@ -38,7 +39,7 @@ const router = new Router({
             requiresAuth: true,
             keepAlive: true,
             deepth: 1
-          },
+          }
         },
         {
           path: 'user/:id',
@@ -46,7 +47,7 @@ const router = new Router({
           component: () => import('@/views/UserDetails'),
           meta: {
             requiresAuth: true
-          },
+          }
         },
         {
           path: 'add',
@@ -54,7 +55,7 @@ const router = new Router({
           component: () => import('@/views/Add'),
           meta: {
             requiresAuth: true
-          },
+          }
         },
         {
           path: 'setting',
@@ -62,7 +63,7 @@ const router = new Router({
           component: () => import('@/views/Setting'),
           meta: {
             requiresAuth: true
-          },
+          }
         },
         {
           path: 'system',
@@ -70,7 +71,7 @@ const router = new Router({
           component: () => import('@/views/SystemNews'),
           meta: {
             requiresAuth: true
-          },
+          }
         },
         {
           path: 'schedule',
@@ -78,7 +79,7 @@ const router = new Router({
           component: () => import('@/views/Schedule'),
           meta: {
             requiresAuth: true
-          },
+          }
         }
       ]
     },
@@ -90,22 +91,21 @@ const router = new Router({
   ]
 })
 
-
 router.beforeEach((to, from, next) => {
   /**tips:需要在钩子函数内读取登录状态 */
   const userIsLogin = store.state.user.isLogin
-  if(to.meta.requiresAuth){
-    if(userIsLogin){
+  if (to.meta.requiresAuth) {
+    if (userIsLogin) {
       next()
-    }else{
+    } else {
       // alert('请先登录再进行此操作!')
       next({
         path: '/login',
         /** 将刚刚要去的路由path（却无权限）作为参数，方便登录成功后直接跳转到该路由 */
         query: { redirect: to.fullPath }
       })
-    } 
-  }else{
+    }
+  } else {
     next()
   }
 })

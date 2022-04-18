@@ -38,25 +38,6 @@ export const uploadImgStatusMap = {
   complete: 'complete'
 }
 
-// 在CoArtBoard组件中对调色板的操作
-export const coArtBoardHandleOption = [
-  { name: "圆", type: "arc" },
-  { name: "线条", type: "line" },
-  { name: "矩形", type: "rect" },
-  { name: "多边形", type: "polygon" },
-  { name: "橡皮擦", type: "eraser" },
-  { name: "撤回", type: "cancel" },
-  { name: "前进", type: "go" },
-  { name: "清屏", type: "clear" },
-  { name: "线宽", type: "lineWidth" },
-  { name: "颜色", type: "color" }
-]
-
-export const coArtBoardReplyTypes = {
-  agree: 'agree',
-  disagree: 'disagree',
-  busy: 'busy'
-}
 
 export const weatherMap = {
   "阴": 'icon-tianqi',

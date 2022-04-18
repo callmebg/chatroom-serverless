@@ -1,6 +1,14 @@
 <template>
-  <div class="layout-page" v-css="{'background-image': 'url(' + bgImgUrl + ')'}">
-    <div v-if="!device === 'Mobile'" class="toggle" @click.stop="setShowMain" title="切换聊天区域是否显示">
+  <div
+    class="layout-page"
+    v-css="{ 'background-image': 'url(' + bgImgUrl + ')' }"
+  >
+    <div
+      v-if="!device === 'Mobile'"
+      class="toggle"
+      @click.stop="setShowMain"
+      title="切换聊天区域是否显示"
+    >
       <i class="icon el-icon-thumb"></i>
     </div>
     <transition name="fade">
@@ -11,24 +19,40 @@
           v-if="!device === 'Mobile'"
           class="filter-bgc"
           v-css="{
-            'filter': 'blur(' + blur + 'px)',
+            filter: 'blur(' + blur + 'px)',
             'background-image': 'url(' + bgImgUrl + ')'
           }"
         />
         <el-main
-          :class="device === 'Mobile' ? 'co-messager-main mobile' : 'co-messager-main'"
-          v-css=" opacity !== 1 ? {'opacity': opacity} : {}"
+          :class="
+            device === 'Mobile' ? 'co-messager-main mobile' : 'co-messager-main'
+          "
+          v-css="opacity !== 1 ? { opacity: opacity } : {}"
         >
           <audio :src="NotifyAudio" ref="audio" muted></audio>
           <transition name="slide-left">
             <div
-              :class="device === 'Mobile' ? 'co-messager-aside mobile' : 'co-messager-aside'"
-              v-css="device === 'Mobile' ? {'transform': 'translateX(' + asideTranslateX + 'px)'} : ''"
+              :class="
+                device === 'Mobile'
+                  ? 'co-messager-aside mobile'
+                  : 'co-messager-aside'
+              "
+              v-css="
+                device === 'Mobile'
+                  ? { transform: 'translateX(' + asideTranslateX + 'px)' }
+                  : ''
+              "
             >
               <my-aside :set-show-theme="setShowTheme" />
             </div>
           </transition>
-          <div :class="device === 'Mobile' ? 'co-messager-content mobile' : 'co-messager-content'">
+          <div
+            :class="
+              device === 'Mobile'
+                ? 'co-messager-content mobile'
+                : 'co-messager-content'
+            "
+          >
             <keep-alive :include="include">
               <router-view v-if="$route.meta.keepAlive"></router-view>
             </keep-alive>
@@ -42,11 +66,16 @@
     </transition>
     <!-- 在移动端下点击展示左边菜单 -->
     <div
-      v-show="device === 'Mobile' && asideTranslateX === -70 && $route.path === '/index' && currentUI === 'conversation'"
+      v-show="
+        device === 'Mobile' &&
+          asideTranslateX === -70 &&
+          $route.path === '/index' &&
+          currentUI === 'conversation'
+      "
       class="mobile-menu"
       @click.stop="toggleAside"
     >
-      <img :src="IMG_URL + userInfo.photo" alt="" srcset="">
+      <img :src="IMG_URL + userInfo.photo" alt="" srcset="" />
     </div>
   </div>
 </template>
@@ -55,11 +84,11 @@
 import { mapState } from 'vuex'
 import myHeader from './components/Header'
 import myAside from './components/Aside'
-import { APP_VERSION } from '@/const'
 import { saveRecentConversationToLocal } from '@/utils'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
 import theme from '@/components/theme'
 import NotifyAudio from './../../../static/audio/notify.mp3'
+import SocketService from '@/utils/socket_service'
 const systemPictureMap = {
   abstract: require('./../../../static/image/theme/abstract.jpg'),
   city: require('./../../../static/image/theme/city.jpg'),
@@ -119,7 +148,7 @@ export default {
     bgImg: {
       handler(bgImg) {
         /**如果是base64就直接使用否则从系统自带图片获取 */
-        this.bgImgUrl = "/static/image/ocean1.jpg"
+        this.bgImgUrl = '/static/image/ocean1.jpg'
         /*
         if (bgImg.includes('base64')) {
           this.bgImgUrl = bgImg
@@ -127,12 +156,16 @@ export default {
           this.bgImgUrl = systemPictureMap[bgImg]
         }
         */
-      }, deep: true, immediate: true
+      },
+      deep: true,
+      immediate: true
     },
     notifySound: {
       handler(notifySound) {
         this.NotifyAudio = notifySoundMap[notifySound]
-      }, deep: true, immediate: true
+      },
+      deep: true,
+      immediate: true
     },
     $route(to, from) {
       const include = this.include
@@ -156,6 +189,7 @@ export default {
     theme
     // chatView
   },
+  /*
   sockets: {
     connect: function () {
       console.log('socket connected', this.$socket.id)
@@ -208,9 +242,9 @@ export default {
     conversationList(list) {
       // console.log("当前会话列表", list)
     },
-    /**
-     * 发送的消息被对方读取了
-     */
+    
+     //发送的消息被对方读取了
+     
     isReadMsg(val) {
       console.log('isReadMsg', val)
       const { roomid, status } = val
@@ -220,6 +254,7 @@ export default {
       })
     }
   },
+  */
   methods: {
     userGoOnline() {
       this.$socket.emit('goOnline', this.userInfo)
@@ -247,23 +282,21 @@ export default {
       this.showMain = !this.showMain
     },
     toggleAside() {
-      this.asideTranslateX === 0 ? this.asideTranslateX = -70 : this.asideTranslateX = 0
+      this.asideTranslateX === 0
+        ? (this.asideTranslateX = -70)
+        : (this.asideTranslateX = 0)
     }
   },
   mounted() {
-    this.$socket.emit('connect')
+    console.log('对服务端进行websocket的连接')
+    SocketService.Instance.connect()
+    this.$socket.emit('connect', '1')
     if (this.device === 'Mobile') {
       document.addEventListener('click', () => {
         this.asideTranslateX = -70
       })
     }
     this.sysUserJoinSocket()
-    console.log(
-      `%c Messger V${APP_VERSION} Started %c Contact: ccdebuging@gmail.com %c`,
-      'background:#35495e ; padding: 1px; border-radius: 3px 0 0 3px;  color: #fff',
-      'background:#41b883 ; padding: 1px; border-radius: 0 3px 3px 0;  color: #fff',
-      'background:transparent'
-    )
   }
 }
 </script>
@@ -278,7 +311,7 @@ export default {
   background-attachment: fixed;
   background-color: #e9ebee;
   position: relative;
-  transition: all .4s ease-out;
+  transition: all 0.4s ease-out;
   .toggle {
     position: fixed;
     .icon {
@@ -317,7 +350,7 @@ export default {
       color: #333;
       border-radius: 5px;
       padding: 0;
-      opacity: .8;
+      opacity: 0.8;
       /*针对移动端做特殊处理*/
       &.mobile {
         left: 0;

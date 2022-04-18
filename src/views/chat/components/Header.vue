@@ -54,31 +54,11 @@ export default {
       }
       return res
     },
-    ...mapState('app', {
-      isToCoArtBoard: 'isToCoArtBoard',
-      isVideoing: 'isVideoing',
-      isAudioing: 'isAudioing'
-    }),
     device() {
       return this.$store.state.device.deviceType
     }
   },
   methods: {
-    enterArtBoard() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_ISTOCOARTBOARD', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.artBoard})
-    },
-    videoCall() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_IS_VIDEOING', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.video})
-    },
-    audioCall() {
-      if (this.isToCoArtBoard || this.isVideoing || this.isAudioing) return
-      this.$store.dispatch('app/SET_IS_AUDIOING', true)
-      this.$eventBus.$emit('web_rtc_msg', { type: WEB_RTC_MSG_TYPE.audio})
-    },
     toggleShowSettingPanel() {
       this.showSettingPanel = !this.showSettingPanel
     },

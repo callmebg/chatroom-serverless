@@ -1,16 +1,40 @@
 <template>
-  <div class="login-page" :style="'background-image: url('+ bgUrl +')'">
-    <div class="wrapper hor-ver-center" :style="device === 'Mobile' ? {width: '90%'}:{}">
+  <div class="login-page" :style="'background-image: url(' + bgUrl + ')'">
+    <div
+      class="wrapper hor-ver-center"
+      :style="device === 'Mobile' ? { width: '90%' } : {}"
+    >
       <el-form class="login-form" v-if="isLoginState">
         <el-form-item>
-          <el-input autocomplete="new-password" v-model="loginInfo.account" prefix-icon="el-icon-user" @keydown.enter="login" placeholder="请输入账号"></el-input>
+          <el-input
+            autocomplete="new-password"
+            v-model="loginInfo.account"
+            prefix-icon="el-icon-user"
+            @keydown.enter="login"
+            placeholder="请输入账号"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input autocomplete="new-password" type="password" v-model="loginInfo.password" prefix-icon="el-icon-lock" placeholder="请输入密码"></el-input>
+          <el-input
+            autocomplete="new-password"
+            type="password"
+            v-model="loginInfo.password"
+            prefix-icon="el-icon-lock"
+            placeholder="请输入密码"
+          ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button class="login-btn" type="primary" @click="login">登录</el-button>
-          <span>没有账号？<span class="operation-text" style="display: inline" @click="changeState(false)">注册</span></span>
+          <el-button class="login-btn" type="primary" @click="login"
+            >登录</el-button
+          >
+          <span
+            >没有账号？<span
+              class="operation-text"
+              style="display: inline"
+              @click="changeState(false)"
+              >注册</span
+            ></span
+          >
         </el-form-item>
       </el-form>
       <el-form class="register-form" v-if="!isLoginState">
@@ -26,51 +50,82 @@
         </div>
         -->
         <el-form-item>
-          <el-input type="text" autocomplete="new-password" v-model="registerInfo.account" prefix-icon="el-icon-magic-stick" placeholder="请输入账号"></el-input>
+          <el-input
+            type="text"
+            autocomplete="new-password"
+            v-model="registerInfo.account"
+            prefix-icon="el-icon-magic-stick"
+            placeholder="请输入账号"
+          ></el-input>
           <!-- <span class="account-errinfo">{{ registerErrInfo.account }}</span> -->
         </el-form-item>
         <el-form-item>
-          <el-input type="text" autocomplete="new-password" v-model="registerInfo.nickname" prefix-icon="el-icon-user" placeholder="请输入昵称"></el-input>
+          <el-input
+            type="text"
+            autocomplete="new-password"
+            v-model="registerInfo.nickname"
+            prefix-icon="el-icon-user"
+            placeholder="请输入昵称"
+          ></el-input>
           <!-- <span class="account-errinfo">{{ registerErrInfo.account }}</span> -->
         </el-form-item>
         <el-form-item>
-          <el-input type="text" autocomplete="new-password" onfocus="this.type = 'password'" v-model="registerInfo.password" prefix-icon="el-icon-lock" placeholder="请输入密码"></el-input>
+          <el-input
+            type="text"
+            autocomplete="new-password"
+            onfocus="this.type = 'password'"
+            v-model="registerInfo.password"
+            prefix-icon="el-icon-lock"
+            placeholder="请输入密码"
+          ></el-input>
           <!-- <span class="password-errinfo">{{ registerErrInfo.password }}</span> -->
         </el-form-item>
         <el-form-item>
-          <el-input type="text" autocomplete="new-password" onfocus="this.type = 'password'" v-model="registerInfo.rePassword" prefix-icon="el-icon-lock" placeholder="请确认密码"></el-input>
+          <el-input
+            type="text"
+            autocomplete="new-password"
+            onfocus="this.type = 'password'"
+            v-model="registerInfo.rePassword"
+            prefix-icon="el-icon-lock"
+            placeholder="请确认密码"
+          ></el-input>
           <!-- <span class="password-errinfo">{{ errInfo.password }}</span> -->
         </el-form-item>
         <el-form-item class="oper">
-          <el-button class="login-btn" type="primary" @click="register">注册</el-button>
-          <span>已有账号？<span class="operation-text" style="display: inline" @click="changeState(true)">登录</span></span>
+          <el-button class="login-btn" type="primary" @click="register"
+            >注册</el-button
+          >
+          <span
+            >已有账号？<span
+              class="operation-text"
+              style="display: inline"
+              @click="changeState(true)"
+              >登录</span
+            ></span
+          >
         </el-form-item>
       </el-form>
     </div>
-    <!--
     <copy-right />
-    -->
   </div>
 </template>
 
-
 <script>
 import ocean1 from './../../static/image/ocean1.jpg'
-import {createCanvas} from '@/utils/cvcode'
+import { createCanvas } from '@/utils/cvcode'
 import canvasImg from './../../static/image/canvas2.jpg'
 import { accountReg, passwordReg } from '@/utils/index'
 import copyRight from '@/components/copyright'
-const faceRandom = Math.ceil(Math.random()*10)
+const faceRandom = Math.ceil(Math.random() * 10)
 export default {
   name: 'Login',
   data() {
     return {
       loginInfo: {
         account: '',
-        password:'',
+        password: '',
         cvCode: '',
-        cvCodeTimestamp: '',
-        avatar: JSON.parse(window.localStorage.getItem('userInfo') || '{}').photo || ''
+        cvCodeTimestamp: ''
       },
       registerInfo: {
         account: '',
@@ -104,30 +159,23 @@ export default {
       if (!passwordReg.test(this.loginInfo.password)) {
         return this.$message.error('请输入3-20位由数字字母组成的密码')
       }
-      const returnCitySN = window.returnCitySN ? window.returnCitySN : {}
       const params = {
         ...this.loginInfo,
         setting: {
-          os: window.OSInfo,
-          browser: window.Browser,
-          ip: returnCitySN["cip"],
-          country: returnCitySN["cname"]
+          ua: navigator.userAgent,
+          location: window.userLocation
         }
       }
       this.$http.login(params).then(res => {
-        
-        var data = res.data.body
+        var data = res.data
         if (data.success) {
           this.$message.success('登录成功！')
-          data.data = {"photo":"face/face16.jpg","signature":"","nickname":"卡瓦哈尔48","email":"","province":{"name":"四川省","value":"510000"},"city":{"name":"成都市","value":"510100"},"town":{"name":"龙泉驿区","value":"510112"},"sex":"3","bubble":"vchat","chatColor":"#ffffff","bgOpa":0.2,"projectTheme":"vchat","wallpaper":"/img/wallpaper.jpg","signUpTime":"2022-04-07T07:17:58.631Z","lastLoginTime":"2022-04-08T09:12:17.432Z","conversationsList":[],"cover":["/img/cover.jpg","/img/cover1.jpg"],"emoji":[],"status":0,"age":"18","friendFenzu":{"我的好友":[]},"onlineTime":16789522,"_id":"624e9074327987459850dd8f","name":"wcb","pass":"b9ec3da5ecef5b68422584ed892b1f2e","code":"10000000","__v":0,"loginSetting":{"os":"Windows NT 10.0","browser":"FireFox","ip":"221.4.34.173","country":"广东省广州市"}}
           this.$store.dispatch('user/LOGIN', data.data)
           const redirect = this.$router.currentRoute.query.redirect
           const next = redirect ? redirect : '/chat/home'
           this.$router.replace(next)
-        }else {
-          this.$message.error(data.message)
         }
-        
+
         /*
         let { status, data, msg } = res.data
         if (status === 1002) { // 验证码错误重新获取验证码
@@ -155,7 +203,6 @@ export default {
           }
         }
         */
-
       })
     },
     register() {
@@ -174,19 +221,25 @@ export default {
           this.$message.error(msg)
           status === 1002 ? this.getCVCode() : ''
         } else if (status === 1005) {
-          this.$alert(`这是你的账号:${data}，你可以以此账号或昵称登录系统`, '注册成功')
+          this.$alert(
+            `这是你的账号:${data}，你可以以此账号或昵称登录系统`,
+            '注册成功'
+          )
           this.changeState(true)
         }
       })
     },
-    getCVCode() { // 获取验证码
+    getCVCode() {
+      // 获取验证码
       this.cvCodeing = true
       this.$http.getCVCode().then(res => {
         let { data, status, timestamp } = res.data
         this.cvCode = data
         this.loginInfo.cvCodeTimestamp = timestamp
         this.$nextTick(() => {
-          const currCanvas = this.isLoginState ? this.$refs.loginCanvas : this.$refs.registerCanvas
+          const currCanvas = this.isLoginState
+            ? this.$refs.loginCanvas
+            : this.$refs.registerCanvas
           createCanvas(this.cvCode, currCanvas, canvasImg, () => {
             this.cvCodeing = false
           })
@@ -195,7 +248,7 @@ export default {
     },
     changeState(flag) {
       this.isLoginState = flag
-      this.getCVCode()
+      //this.getCVCode()
     },
     setShowChooseAvatar(flag) {
       this.showChooseAvatar = flag
@@ -207,21 +260,17 @@ export default {
   components: {
     copyRight
   },
-  async mounted() {
-    this.getCVCode()
-    this.$socket.emit('leave')
-  }
-};
+}
 </script>
 
 <style lang="scss">
 .login-page {
-  @import "./../../static/css/animation.scss";
-  @import "./../../static/css/var.scss";
+  @import './../../static/css/animation.scss';
+  @import './../../static/css/var.scss';
   height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
-  transition: all .8s ease;
+  transition: all 0.8s ease;
   .ceshi {
     display: none;
     position: absolute;
@@ -234,10 +283,11 @@ export default {
   .wrapper {
     background-color: #fff;
     width: 400px;
-    opacity: .9;
+    opacity: 0.9;
     padding: 35px 20px 0;
     border-radius: 5px;
-    .login-form, .register-form {
+    .login-form,
+    .register-form {
       position: relative;
       .avatar {
         position: absolute;
@@ -246,7 +296,7 @@ export default {
         text-align: center;
         margin-bottom: 10px;
         .el-avatar {
-          box-shadow: 0 2px 12px 0 rgba(0,0,0,0.1);
+          box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
         }
       }
     }

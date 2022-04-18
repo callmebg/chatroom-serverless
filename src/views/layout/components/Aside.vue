@@ -2,7 +2,7 @@
   <div class="layout-cmp__aside">
     <div class="avatar">
       <router-link to="/chat/setting">
-        <el-avatar shape="square" :size="50" :src="IMG_URL + userInfo.photo"></el-avatar>
+        <el-avatar shape="square" :size="50" src="https://profile-avatar.csdnimg.cn/9ca6422694b64b4e9fea18ea02493630_qq_34438779.jpg"></el-avatar>
       </router-link>
       <!-- <el-tooltip class="item" effect="dark" :content="userInfo.nickname" placement="top"> -->
         <span class="nickname">{{userInfo.nickname}}</span>
@@ -39,7 +39,8 @@ export default {
   },
   data() {
     return {
-      IMG_URL: process.env.IMG_URL
+      IMG_URL: process.env.IMG_URL,
+      user_profile: 'https://profile-avatar.csdnimg.cn/9ca6422694b64b4e9fea18ea02493630_qq_34438779.jpg'
     }
   },
   computed: {

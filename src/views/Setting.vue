@@ -2,7 +2,7 @@
   <div class="setting-page" :style="device === 'Mobile' ? {width: '95%'} : {}">
     <div class="header">
       <div class="avatar">
-        <img :src="IMG_URL + userInfo.photo" alt="" srcset="">
+        <img src="https://www.baidu.com/img/flexible/logo/pc/result.png">
       </div>
       <div class="info-list">
         <div class="info-item">MessagerId：{{userInfo.code}}</div>

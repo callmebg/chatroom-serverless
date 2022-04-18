@@ -20,7 +20,7 @@
             <el-badge :is-dot="validateUnReadCount > 0" class="badge-item">
               <el-avatar size="large"
                 class="avatar"
-                :src="IMG_URL + userInfo.photo"
+                :src="this.$store.userInfo.user_profile"
                 @error="() => true"
               >
                 <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt="" srcset="">
@@ -66,41 +66,12 @@
         </div>
       </div>
     </el-header>
-    <transition name="fade">
-      <vue-draggable-resizable
-        v-if="isToCoArtBoard"
-        drag-cancel=".drawingarea"
-      >
-        <div class="co-art-board">
-          <co-art-board :currentconversation="currentConversation" :state="webRTCState" :web-rtc-type="WEB_RTC_MSG_TYPE.artBoard" />
-        </div>
-      </vue-draggable-resizable>
-    </transition>
-    <transition name="fade">
-      <vue-draggable-resizable
-        v-if="isVideoing || isAudioing"
-        :x="0"
-        :y="500"
-        drag-cancel=".drawingarea"
-      >
-        <div class="co-art-board box-shadow1">
-          <co-video
-            :currentconversation="currentConversation"
-            :state="webRTCState"
-            :web-rtc-type="coVideoWebRtcType"
-          />
-        </div>
-      </vue-draggable-resizable>
-    </transition>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import vueDraggableResizable from 'vue-draggable-resizable'
-import CoArtBoard from '@/views/CoArtBoard'
-import CoVideo from '@/views/CoVideo'
-import { coArtBoardReplyTypes, WEB_RTC_MSG_TYPE } from '@/const'
 import { removeCookie } from '@/utils/token'
 
 const WEB_RTC_MSG_TYPE_TEXT = {
@@ -129,12 +100,6 @@ export default {
       const key = (validateSysUser || {})._id + '-' + (this.userInfo || {})._id
       return this.unreadNews[key]
     },
-    ...mapState('app', {
-      isToCoArtBoard: 'isToCoArtBoard',
-      isVideoing: 'isVideoing',
-      isAudioing: 'isAudioing',
-      currentConversation: 'currentConversation'
-    }),
     coVideoWebRtcType () {
       let res = null
       if (this.isVideoing) {
@@ -150,26 +115,9 @@ export default {
       this.$router.replace('/login')
       this.$socket.emit('leave')
       removeCookie()
-    },
-    webRtcMsgWatch(newVal) {
-      if (newVal) {
-        timer = setTimeout(() => {
-          this.$alert('对方没有答应，请先等待一段时间再尝试', '提示', {
-            confirmButtonText: '确定',
-            type: 'warning',
-            callback: action => {
-              this.$store.dispatch('app/SET_ISTOCOARTBOARD', false)
-              this.$store.dispatch('app/SET_IS_AUDIOING', false)
-              this.$store.dispatch('app/SET_IS_VIDEOING', false)             
-            }
-          });
-        }, 10000)
-      }
     }
   },
   components: {
-    CoArtBoard,
-    CoVideo,
     vueDraggableResizable
   },
   sockets: {
