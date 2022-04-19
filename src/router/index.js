@@ -42,14 +42,6 @@ const router = new Router({
           }
         },
         {
-          path: 'user/:id',
-          name: 'UserDetails',
-          component: () => import('@/views/UserDetails'),
-          meta: {
-            requiresAuth: true
-          }
-        },
-        {
           path: 'add',
           name: 'Add',
           component: () => import('@/views/Add'),

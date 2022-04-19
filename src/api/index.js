@@ -3,9 +3,7 @@ import group from './modules/group'
 import news from './modules/news'
 import sys from './modules/sys'
 import validate from './modules/validate'
-// import user from './modules/user'
-import user from './modules/users'
-import blog from './modules/blog'
+import user from './modules/user'
 
 export const API = 'api'
 
@@ -16,5 +14,4 @@ export default {
   ...news,
   ...sys,
   ...validate,
-  ...blog
 }

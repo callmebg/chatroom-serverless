@@ -28,6 +28,8 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => {
       console.log(response)
+      /*
+      // TODO 统一拦截，还没想好
       if(!response.data.success) {
         this.$message.error(data.message);
       }

@@ -6,10 +6,10 @@
         <el-tag type="info">选择过滤条件：</el-tag>
         <el-select v-model="filterType" placeholder="请选择">
           <el-option
-            label="群"
+            label="群聊"
             :value="1" />
           <el-option
-            label="好友"
+            label="用户"
             :value="0" />
         </el-select>
         <el-select v-model="filterStatus" placeholder="请选择">

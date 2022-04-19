@@ -18,7 +18,7 @@
             :value="item.value"
           />
         </el-select>
-        <el-button type="primary" icon="el-icon-search">搜索</el-button>
+        <el-button type="primary" icon="el-icon-search" @click="fetch(false, true)">搜索</el-button>
       </div>
     </div>
     <div class="body">
@@ -44,7 +44,7 @@
 
 <script>
 import { debounce } from '@/utils'
-import { searchObjectMap, searchTypes } from '@/const'
+import { searchObjectMap} from '@/const'
 import userList from '@/components/customSearchList/userList'
 import groupList from '@/components/customSearchList/groupList'
 import EmptySvg from '@/SVGComponents/empty'
@@ -54,9 +54,7 @@ export default {
     return {
       searchKey: '',
       searchObjectMap,
-      searchTypes,
       searchObject: 'friend',
-      searchType: 'code',
       isFetch: false,
       searchList: [],
       hasMore: true,
@@ -68,8 +66,8 @@ export default {
     async fetchUser(params, loadMore) {
       try {
         const { data } = await this.$http.preFetchUser(params)
-        if (data.status === 2000) {
-          const { data: userList } = data
+        if (data.success) {
+          const userList = data.data
           if (loadMore) {
             this.searchList = [...this.searchList, ...userList]
           } else {
@@ -130,7 +128,7 @@ export default {
         this.hasMore = true
       }
       this.isFetch = true
-      const params = {type: this.searchType, q: this.searchKey, pageSize: this.pageSize, page: this.page}
+      const params = {q: this.searchKey, pageSize: this.pageSize, page: this.page}
       if (this.searchObject === 'friend') {
         this.fetchUser(params, loadMore)        
       } else if (this.searchObject === 'group') {
@@ -167,9 +165,9 @@ export default {
 
 <style lang="scss">
 .add-page {
-  width: 815px;
+  width: 840px;
   height: 100%;
-  padding: 10px 0;
+  padding: 10px 10px;
   overflow-y: scroll;
   // margin: 0 auto;
   .header {

@@ -2,10 +2,10 @@
   <div class="layout-cmp__aside">
     <div class="avatar">
       <router-link to="/chat/setting">
-        <el-avatar shape="square" :size="50" src="https://profile-avatar.csdnimg.cn/9ca6422694b64b4e9fea18ea02493630_qq_34438779.jpg"></el-avatar>
+        <el-avatar shape="square" :size="55" :src="userInfo.user_profile"></el-avatar>
       </router-link>
       <!-- <el-tooltip class="item" effect="dark" :content="userInfo.nickname" placement="top"> -->
-        <span class="nickname">{{userInfo.nickname}}</span>
+        <span class="nickname">{{userInfo.user_nickname}}</span>
       <!-- </el-tooltip> -->
     </div>
     <div class="nav-list">
@@ -39,8 +39,6 @@ export default {
   },
   data() {
     return {
-      IMG_URL: process.env.IMG_URL,
-      user_profile: 'https://profile-avatar.csdnimg.cn/9ca6422694b64b4e9fea18ea02493630_qq_34438779.jpg'
     }
   },
   computed: {
@@ -71,12 +69,14 @@ export default {
     flex-wrap: wrap;
     .nickname {
       display: inline-block;
-      width: 50px;
+      width: 55px;
       margin-top: 10px;
       cursor: pointer;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+      font-size: small;
+      text-align:center;
     }
   }
   .nav-list {

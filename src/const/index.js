@@ -13,16 +13,6 @@ export const searchObjectMap = [
   {id: 2, label: '群聊', value: 'group'}
 ]
 
-export const searchTypes = {
-  friend: [
-    {id: 1, label: '账号', value: 'account'},
-    {id: 2, label: '昵称', value: 'nickname'}
-  ],
-  group: [
-    {id: 1, label: '群号', value: 'account'},
-    {id: 2, label: '名称', value: 'groupname'}
-  ]
-}
 
 export const validateNewsTips = {
   applyFriend: '请求添加你为好友',

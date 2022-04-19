@@ -19,8 +19,8 @@ export default {
     return request.get(`group/groupinfo?id=${id}`)
   },
   preFetchGroup(data) {
-    const { type, q, page, pageSize } = data // type可以是title以及code
-    return request.get(`group/prefetchgroup?type=${type}&q=${q}&page=${page}&pageSize=${pageSize}`)
+    const { q, page, pageSize } = data // type可以是title以及code
+    return request.get(`group/prefetchgroup?q=${q}&page=${page}&pageSize=${pageSize}`)
   },
   /**
    * 创建群聊

@@ -13,7 +13,6 @@
     </div>
     <transition name="fade">
       <main v-show="showMain" class="co-messager-layout">
-        <my-header></my-header>
         <!-- filter-bgc是用于设置背景虚化的，因为使用了filter以及transform后fixed会改变 -->
         <div
           v-if="!device === 'Mobile'"
@@ -82,7 +81,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import myHeader from './components/Header'
 import myAside from './components/Aside'
 import { saveRecentConversationToLocal } from '@/utils'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
@@ -184,7 +182,6 @@ export default {
     }
   },
   components: {
-    myHeader,
     myAside,
     theme
     // chatView

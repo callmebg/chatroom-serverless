@@ -116,6 +116,7 @@ import { createCanvas } from '@/utils/cvcode'
 import canvasImg from './../../static/image/canvas2.jpg'
 import { accountReg, passwordReg } from '@/utils/index'
 import copyRight from '@/components/copyright'
+import COS from 'cos-js-sdk-v5'
 const faceRandom = Math.ceil(Math.random() * 10)
 export default {
   name: 'Login',
@@ -125,7 +126,7 @@ export default {
         account: '',
         password: '',
         cvCode: '',
-        cvCodeTimestamp: ''
+        cvCodeTimestamp: '',
       },
       registerInfo: {
         account: '',
@@ -133,14 +134,14 @@ export default {
         password: '',
         rePassword: '',
         cvCode: '',
-        avatar: `face/face${faceRandom}.jpg`
+        avatar: `face/face${faceRandom}.jpg`,
       },
       cvCode: '', // 验证码
       cvCodeing: true, // 正在获取验证码？
       isLoginState: true,
       bgUrl: ocean1,
       showChooseAvatar: false,
-      IMG_URL: process.env.IMG_URL
+      IMG_URL: process.env.IMG_URL,
     }
   },
   computed: {
@@ -149,7 +150,7 @@ export default {
     },
     avatar() {
       return this.IMG_URL + this.registerInfo.avatar
-    }
+    },
   },
   methods: {
     login() {
@@ -163,46 +164,54 @@ export default {
         ...this.loginInfo,
         setting: {
           ua: navigator.userAgent,
-          location: window.userLocation
-        }
+          location: window.userLocation,
+        },
       }
-      this.$http.login(params).then(res => {
+      this.$http.login(params).then((res) => {
         var data = res.data
         if (data.success) {
+          // 登录后就可以上传文件
+          /* 固定凭证
+          this.$http.getToken().then((res) => {
+            this.$store.commit('user/setUploadToken', res.data.data)
+            var cos = new COS({
+              SecretId:
+                this.$store.state.user.uploadToken.credentials.tmpSecretId,
+              SecretKey:
+                this.$store.state.user.uploadToken.credentials.tmpSecretKey,
+            })
+            this.$store.commit('user/setCos', cos)
+          })
+          */
+          var that = this
+          var cos = new COS({
+            getAuthorization: function (options, callback) {
+              // 异步获取临时密钥
+              that.$http.getToken().then((res) => {
+                var token = res.data.data
+                that.$store.commit('user/setUploadToken', token)
+                try {
+                  var credentials = token.credentials
+                } catch (e) {}
+                if (!data || !credentials)
+                  return console.error('credentials invalid')
+                callback({
+                  TmpSecretId: credentials.tmpSecretId, // 临时密钥的 tmpSecretId
+                  TmpSecretKey: credentials.tmpSecretKey, // 临时密钥的 tmpSecretKey
+                  SecurityToken: credentials.sessionToken, // 临时密钥的 sessionToken
+                  ExpiredTime: token.expiredTime, // 临时密钥失效时间戳，是申请临时密钥时，时间戳加 durationSeconds
+                })
+              })
+            },
+          })
+          this.$store.commit('user/setCos', cos)
+
           this.$message.success('登录成功！')
           this.$store.dispatch('user/LOGIN', data.data)
           const redirect = this.$router.currentRoute.query.redirect
           const next = redirect ? redirect : '/chat/home'
           this.$router.replace(next)
         }
-
-        /*
-        let { status, data, msg } = res.data
-        if (status === 1002) { // 验证码错误重新获取验证码
-          this.loginInfo.cvCode = ''
-          this.getCVCode()
-        }
-        if (status === 1007) {
-          this.getCVCode()
-          return
-        }
-        if (res.status === 200 && status === 1000) {
-          this.$message.success('登录成功！')
-          this.$store.dispatch('user/LOGIN', data)
-          const redirect = this.$router.currentRoute.query.redirect
-          const next = redirect ? redirect : '/chat/home'
-          this.$router.replace(next)
-        } else {
-          this.$message.error(msg)
-          if (status === 1006 || status === 1007) {
-            this.$confirm(`${msg}`, `通知：${msg}`, {
-              // confirmButtonText: '确定',
-              // cancelButtonText: '取消',
-              type: 'error'
-            })
-          }
-        }
-        */
       })
     },
     register() {
@@ -215,24 +224,24 @@ export default {
       if (this.registerInfo.password !== this.registerInfo.rePassword) {
         return this.$message.error('两次输入的密码不一致')
       }
-      this.$http.register(this.registerInfo).then(res => {
-        let { msg, status, data } = res.data
-        if (status !== 1005) {
-          this.$message.error(msg)
-          status === 1002 ? this.getCVCode() : ''
-        } else if (status === 1005) {
+      var that = this
+      this.$http.register(this.registerInfo).then((res) => {
+        let { success, code, message } = res.data
+        if (success) {
           this.$alert(
-            `这是你的账号:${data}，你可以以此账号或昵称登录系统`,
+            `这是你的账号:${that.registerInfo.account}，你可以以此账号登录系统`,
             '注册成功'
           )
           this.changeState(true)
+        } else {
+          this.$message.error(message)
         }
       })
     },
     getCVCode() {
       // 获取验证码
       this.cvCodeing = true
-      this.$http.getCVCode().then(res => {
+      this.$http.getCVCode().then((res) => {
         let { data, status, timestamp } = res.data
         this.cvCode = data
         this.loginInfo.cvCodeTimestamp = timestamp
@@ -255,10 +264,10 @@ export default {
     },
     chooseAvatar(item) {
       this.registerInfo.avatar = item
-    }
+    },
   },
   components: {
-    copyRight
+    copyRight,
   },
 }
 </script>

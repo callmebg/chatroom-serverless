@@ -1,20 +1,17 @@
 <template>
   <div class="custom-search-list-com">
-    <div class="wrapper" v-for="item in noMeSerchList" :key="item._id">
+    <div class="wrapper" v-for="item in noMeSerchList" :key="item.user_id">
       <div class="details">
         <el-avatar
           class="avatar"
           shape="square"
-          :src="IMG_URL + item.photo"
+          :src="IMG_URL + item.user_profile"
         >
         </el-avatar>
         <div class="info">
-          <p class="item primary-font nickname">
-            <router-link :to="`/user/${item._id}`" tag="span">
-              {{item.nickname}}
-            </router-link>
-          </p>
-          <p class="item secondary-font">{{item.signature}}</p>
+          <p class="item">昵称：{{ item.user_nickname }}</p>
+          <p class="item">性别：{{ showSex(item.user_sex) }}</p>
+          <p class="item">个性签名：{{ item.user_signature }}</p>
         </div>
       </div>
       <div class="operation">
@@ -24,7 +21,7 @@
           icon="el-icon-plus"
           :disabled="(friends || []).includes(item._id)"
           @click="showAdditionDialog(item)"
-        >添加
+          >添加
         </el-button>
         <el-dialog
           title="附加消息"
@@ -36,7 +33,8 @@
               type="textarea"
               :rows="2"
               placeholder="请输入内容"
-              v-model="additionMessage">
+              v-model="additionMessage"
+            >
             </el-input>
           </div>
           <span slot="footer" class="dialog-footer">
@@ -51,9 +49,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { fromatTime } from "@/utils"
+import { fromatTime } from '@/utils'
 export default {
-  props: ["searchlist"],
+  props: ['searchlist'],
   data() {
     return {
       IMG_URL: process.env.IMG_URL,
@@ -61,10 +59,18 @@ export default {
       showAdditionMessage: false,
       additionMessage: '',
       seleceItem: {},
-      loading: false
+      loading: false,
     }
   },
   methods: {
+    showSex(sex) {
+      if (sex == 0) {
+        return '女'
+      } else if (sex == 1) {
+        return '男'
+      }
+      return '保密'
+    },
     showAdditionDialog(item) {
       this.showAdditionMessage = !this.showAdditionMessage
       this.seleceItem = item
@@ -77,10 +83,12 @@ export default {
         this.additionMessage = ''
         this.$alert('验证消息发送成功！', '提示', {
           confirmButtonText: '确定',
-          type: 'warning'
+          type: 'warning',
         })
       }, 500)
-      const validateSysUsr = this.sysUsers.filter(item => item.code === '111111')[0]
+      const validateSysUsr = this.sysUsers.filter(
+        (item) => item.code === '111111'
+      )[0]
       const val = {
         roomid: validateSysUsr._id + '-' + this.seleceItem._id,
         senderId: this.userInfo._id,
@@ -91,36 +99,37 @@ export default {
         time: fromatTime(new Date()),
         additionMessage: this.additionMessage,
         status: 0,
-        validateType: 0
+        validateType: 0,
       }
       this.$socket.emit('sendValidateMessage', val)
-    }
+    },
   },
   computed: {
     ...mapState('app', {
-      sysUsers: 'sysUsers'
+      sysUsers: 'sysUsers',
     }),
     ...mapState('user', {
-      userInfo: 'userInfo'
+      userInfo: 'userInfo',
     }),
     noMeSerchList() {
-      return this.searchlist.filter(item => item._id !== this.userInfo._id)
-    }
+      return this.searchlist
+      // 可以搜索自己
+      //return this.searchlist.filter(item => item._id !== this.userInfo._id)
+    },
   },
 }
 </script>
 
 <style lang="scss">
 .custom-search-list-com {
-  
   .wrapper {
-    border-top: 1px solid #C0C4CC;
+    border-top: 1px solid #c0c4cc;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 0;
     &:last-child {
-      border-bottom: 1px solid #C0C4CC;
+      border-bottom: 1px solid #c0c4cc;
     }
     .details {
       display: flex;
@@ -132,18 +141,7 @@ export default {
       .info {
         margin-left: 27px;
         .item {
-          font-family: "Helvetica, Arial, sans-serif";
-          margin: 0;
-          &:last-child {
-            margin-top: 5px;
-          }
-        }
-        .nickname {
-          cursor: pointer;
-          color: hsla(230, 84%, 63%, 1);
-          &:hover {
-            text-decoration: underline;
-          }
+          font-family: 'Helvetica, Arial, sans-serif';
         }
       }
     }
