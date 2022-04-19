@@ -1,6 +1,5 @@
-import { LocalStorageManager, colorRgb } from '@/utils'
+import { colorRgb } from '@/utils'
 import { colorHexReg } from '@/utils/reg'
-const localStorageManager = new LocalStorageManager()
 
 /**
  * 初始化系统的主题CSS变量
@@ -23,71 +22,65 @@ const _initThemeCSSVariable = (color, bgColor) => {
 
 const state = {
   /**透明度 */
-  opacity: localStorageManager.getJson('theme-opacity')  || 0.75,
+  opacity: 0.9,
   /**模糊度，filter: blur(10px) */
-  blur: localStorageManager.getJson('theme-blur') || 10,
+  blur: 10,
   /**
    * 背景图片，用户上传的图片会转为base64存在localStorage中
    * 系统默认的有abstract.jpg\city.jpg\ocean.jpg
    * 区分系统自带和用户自定义判断是否包含base64
    * */
-  bgImg: localStorageManager.getStr('theme-bgimg') || 'abstract',
-  notifySound: localStorageManager.getStr('theme-notifysound') || 'default',
+  bgImg: 'abstract',
+  notifySound: 'default',
   // isNotifySound: localStorageManager.get('theme-blur') || 10
   /**字体颜色 #000 */
-  color: localStorageManager.getStr('theme-color') || '#000',
+  color: '#000',
   /**背景颜色 #fff */
-  bgColor: localStorageManager.getStr('theme-bgcolor') || '#fff'
+  bgColor: '#fff'
 }
 
 _initThemeCSSVariable(state.color, state.bgColor)
 
 const mutations = {
   setOpacity(state, value) {
-    localStorageManager.set('theme-opacity', value)
     state.opacity = value
   },
   setBlur(state, value) {
-    localStorageManager.set('theme-blur', value)
     state.blur = value
   },
   setBgImg(state, value) {
-    localStorageManager.set('theme-bgimg', value)
     state.bgImg = value
   },
   setNotifySound(state, value) {
-    localStorageManager.set('theme-notifysound', value)
     state.notifySound = value
   },
   setColor(state, value) {
-    localStorageManager.set('theme-color', value)
     state.color = value
     _initThemeCSSVariable(state.color, state.bgColor)
   },
   setBgColor(state, value) {
-    localStorageManager.set('theme-bgcolor', value)
     state.bgColor = value
     _initThemeCSSVariable(state.color, state.bgColor)
   }
 }
 
 const actions = {
-  SET_OPACITY({commit}, value) {
+  SET_OPACITY({ commit }, value) {
     commit('setOpacity', value)
   },
-  SET_BLUR({commit}, value) {
+  SET_BLUR({ commit }, value) {
     commit('setBlur', value)
   },
-  SET_BG_IMG({commit}, value) {
+  SET_BG_IMG({ commit }, value) {
     commit('setBgImg', value)
   },
-  SET_NOTIFY_SOUND({commit}, value) {
+  SET_NOTIFY_SOUND({ commit }, value) {
     commit('setNotifySound', value)
   },
-  SET_COLOR({commit}, value) {
+  SET_COLOR({ commit }, value) {
     commit('setColor', value)
   },
-  SET_BG_COLOR({commit}, value) {
+  SET_BG_COLOR({ commit }, value) {
     commit('setBgColor', value)
   }
 }

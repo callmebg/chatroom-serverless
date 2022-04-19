@@ -94,11 +94,6 @@ const systemPictureMap = {
 }
 const notifySoundMap = {
   default: require('./../../../static/audio/default.mp3'),
-  apple: require('./../../../static/audio/apple.mp3'),
-  pcqq: require('./../../../static/audio/pcqq.mp3'),
-  momo: require('./../../../static/audio/momo.mp3'),
-  huaji: require('./../../../static/audio/huaji.mp3'),
-  mobileqq: require('./../../../static/audio/mobileqq.mp3'),
   none: ''
 }
 export default {
