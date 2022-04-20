@@ -170,6 +170,8 @@ export default {
       this.$http.login(params).then((res) => {
         var data = res.data
         if (data.success) {
+          // 连接Websocket
+          this.$socket.connect()
           // 登录后就可以上传文件
           /* 固定凭证
           this.$http.getToken().then((res) => {

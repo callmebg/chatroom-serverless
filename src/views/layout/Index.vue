@@ -86,7 +86,7 @@ import { saveRecentConversationToLocal } from '@/utils'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
 import theme from '@/components/theme'
 import NotifyAudio from './../../../static/audio/notify.mp3'
-import SocketService from '@/utils/socket_service'
+
 const systemPictureMap = {
   abstract: require('./../../../static/image/theme/abstract.jpg'),
   city: require('./../../../static/image/theme/city.jpg'),
@@ -280,8 +280,6 @@ export default {
     }
   },
   mounted() {
-    console.log('对服务端进行websocket的连接')
-    SocketService.Instance.connect()
     this.$socket.emit('connect', '1')
     if (this.device === 'Mobile') {
       document.addEventListener('click', () => {
