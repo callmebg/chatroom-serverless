@@ -28,45 +28,15 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
   response => {
       console.log(response)
-      /*
+      
       // TODO 统一拦截，还没想好
       if(!response.data.success) {
-        this.$message.error(data.message);
+        Message({
+          message: response.data.message,
+          type: "warning",
+          duration: 3000
+        });
       }
-      /*
-    if (response.data.status === 1000) {
-      setCookie(response.data.token);
-    }
-    if (response.data.status === 2002) {
-      // 未登录
-      Message({
-        message: "请先登录",
-        type: "warning",
-        duration: 3000
-      });
-      router.push("/login");
-    } else if (response.data.status === 2003) {
-      Message({
-        message: "服务端错误,请稍后重试",
-        type: "error",
-        duration: 3000
-      });
-    } else if (response.data.status === 1006) {
-      Message({
-        message: "登录过期",
-        type: "warning",
-        duration: 3000
-      });
-      removeCookie();
-      router.push("/login");
-    } else if (response.data.status === 1007) {
-      Message({
-        message: "验证码过期！",
-        type: "warning",
-        duration: 3000
-      });
-    }
-    */
     return response;
   },
   error => {

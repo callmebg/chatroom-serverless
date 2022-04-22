@@ -1,6 +1,6 @@
 <template>
   <div class="custom-search-list-com">
-    <div class="wrapper" v-for="item in noMeSerchList" :key="item.user_id">
+    <div class="wrapper" v-for="item in searchlist" :key="item.user_id">
       <div class="details">
         <el-avatar
           class="avatar"
@@ -76,6 +76,9 @@ export default {
       this.seleceItem = item
     },
     sendApply() {
+      if(this.userInfo.user_id == this.seleceItem.user_id) {
+        return this.$message({type: 'warning', message: '不能添加自己为好友！'})
+      }
       this.loading = true
       setTimeout(() => {
         this.loading = false
@@ -86,36 +89,19 @@ export default {
           type: 'warning',
         })
       }, 500)
-      const validateSysUsr = this.sysUsers.filter(
-        (item) => item.code === '111111'
-      )[0]
       const val = {
-        roomid: validateSysUsr._id + '-' + this.seleceItem._id,
-        senderId: this.userInfo._id,
-        senderName: this.userInfo.name,
-        senderNickname: this.userInfo.nickname,
-        senderAvatar: this.userInfo.photo,
-        reveiverId: this.seleceItem._id,
-        time: fromatTime(new Date()),
-        additionMessage: this.additionMessage,
-        status: 0,
-        validateType: 0,
+        friend_from: this.userInfo.user_id,
+        friend_to: this.seleceItem.user_id,
+        friend_secConnectionID: this.seleceItem.user_secConnectionID,
+        friend_whyme: this.additionMessage
       }
-      this.$socket.emit('sendValidateMessage', val)
+      this.$socket.emit('addFriend', val)
     },
   },
   computed: {
-    ...mapState('app', {
-      sysUsers: 'sysUsers',
-    }),
     ...mapState('user', {
       userInfo: 'userInfo',
-    }),
-    noMeSerchList() {
-      return this.searchlist
-      // 可以搜索自己
-      //return this.searchlist.filter(item => item._id !== this.userInfo._id)
-    },
+    })
   },
 }
 </script>

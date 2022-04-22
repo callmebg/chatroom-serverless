@@ -5,10 +5,10 @@
   >
     <div class="header">
       <div class="avatar">
-        <img :src="userInfo.user_profile" @click="dialogVisible = true" />
+        <img :src="IMG_URL + userInfo.user_profile" @click="dialogVisible = true" />
       </div>
       <el-dialog title="我的头像" :visible.sync="dialogVisible" width="30%">
-        <img :src="userInfo.user_profile" class="my-avatar-uploader" />
+        <img :src="IMG_URL + userInfo.user_profile" class="my-avatar-uploader" />
         <h5>点击下方加号选择图片,点击确定按钮更换头像</h5>
         <el-upload
           class="my-avatar-uploader"
@@ -17,7 +17,7 @@
           :before-upload="beforeAvatarUpload"
           :on-change="changeFile"
         >
-          <img v-if="imageUrl" :src="imageUrl" class="my-avatar" />
+          <img v-if="imageUrl" :src="IMG_URL + imageUrl" class="my-avatar" />
           <i v-else class="el-icon-plus my-avatar-uploader-icon"></i>
         </el-upload>
         <span slot="footer" class="dialog-footer">
@@ -75,9 +75,10 @@
               </template>
               <template v-else-if="item === 'user_birthday'">
                 <el-date-picker
-                  v-model="userSetting[item]"
+                  v-model="userBirthday"
                   type="date"
                   placeholder="选择日期"
+                  value-format="yyyy-MM-dd"
                 >
                 </el-date-picker>
               </template>
@@ -169,6 +170,7 @@ export default {
   name: 'Setting',
   data() {
     return {
+      userBirthday: "", //这个组件单独写
       imageUrl: '',
       dialogVisible: false, //头像更换页面可见性
       IMG_URL: process.env.IMG_URL,
@@ -225,13 +227,9 @@ export default {
     },
     /**更新用户信息 */
     async saveModify(key) {
-      if (this.userSetting[key] === this.userInfo[key]) {
-        this.setModily(undefined, false)
-        return
-      }
       const params = {
         field: key,
-        value: this.userSetting[key],
+        value: key == "user_birthday" ? this.userBirthday : this.userSetting[key],
         userId: this.userInfo._id,
       }
       this.fetching = true
@@ -322,7 +320,7 @@ export default {
         function (err, data) {
           console.log(err || data)
           if (data.statusCode == 200) {
-            that.imageUrl = that.IMG_URL + key
+            that.imageUrl = key
           }
         }
       )
@@ -336,6 +334,7 @@ export default {
   created() {
     const userInfo = this.$store.state.user.userInfo
     this.setUserSetting(userInfo)
+    this.userBirthday = userInfo.user_birthday
   },
 }
 </script>

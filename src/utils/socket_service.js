@@ -1,3 +1,4 @@
+import { Message } from "element-ui";
 export default class SocketService {
   /**
    * 单例
@@ -51,7 +52,17 @@ export default class SocketService {
     // 得到服务端发送过来的数据
     this.ws.onmessage = msg => {
       console.log('从服务端获取到了数据' + msg.data)
-
+      var data = JSON.parse(msg.data)
+      switch(data["user"])
+      {
+        case "system":
+          Message({
+            message: data["message"],
+            type: "info",
+            duration: 3000
+          });
+          break
+      }
     }
     this.ws.onerror = evt => {
       console.log('连接失败' + evt)

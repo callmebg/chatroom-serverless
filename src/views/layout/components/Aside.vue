@@ -2,7 +2,7 @@
   <div class="layout-cmp__aside">
     <div class="avatar">
       <router-link to="/chat/setting">
-        <el-avatar shape="square" :size="55" :src="userInfo.user_profile"></el-avatar>
+        <el-avatar shape="square" :size="55" :src="IMG_URL + userInfo.user_profile"></el-avatar>
       </router-link>
       <!-- <el-tooltip class="item" effect="dark" :content="userInfo.nickname" placement="top"> -->
         <span class="nickname">{{userInfo.user_nickname}}</span>
@@ -39,6 +39,7 @@ export default {
   },
   data() {
     return {
+      IMG_URL: process.env.IMG_URL
     }
   },
   computed: {

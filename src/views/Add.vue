@@ -88,17 +88,14 @@ export default {
     async fetchGroup (params, loadMore) {
       try {
         const { data } = await this.$http.preFetchGroup(params)
-        if (data.status === 2000) {
-          const { data: groupList } = data
-          groupList.forEach(item => {
-            item.isGroup = true
-          })
+        if (data.success) {
+          const userList = data.data
           if (loadMore) {
-            this.searchList = [...this.searchList, ...groupList]
+            this.searchList = [...this.searchList, ...userList]
           } else {
-            this.searchList = groupList
+            this.searchList = userList
           }
-          if (groupList.length < 7) {
+          if (userList.length < 7) {
             this.hasMore = false
           } else {
             this.hasMore = true

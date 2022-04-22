@@ -49,7 +49,7 @@
           >
             <el-avatar
               size="large"
-              :src="IMG_URL + conversationInfo.photo"
+              :src="IMG_URL + conversationInfo.user_profile"
               @error="() => true"
               :class="!onlineUserIds.includes(conversationInfo._id) ? 'offline' : 'online'"
             >
@@ -59,8 +59,7 @@
           
           <div class="conversation-detail">
             <span class="top-item primary-font detail-item ellipsis space-bw" style="display: flex">
-              <span class="ellipsis">{{conversationInfo.beizhu ? conversationInfo.beizhu : conversationInfo.nickname}}</span>
-              <i :class="'level '+ 'lv' + conversationInfo.level"></i>
+              <span class="ellipsis">{{conversationInfo.beizhu ? conversationInfo.beizhu : conversationInfo.user_nickname}}</span>
             </span>
             <span class="bottom-item secondary-font detail-item ellipsis space-bw" style="display: flex">
               <span v-if="type === 'fenzu'">{{conversationInfo.signature}}</span>

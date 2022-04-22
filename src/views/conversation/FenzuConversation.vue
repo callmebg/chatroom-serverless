@@ -20,7 +20,7 @@
         </template>
         <conversation-item
           v-for="item in outcomeConversation[item]"
-          :key="item.id"
+          :key="item.user_id"
           :conversationInfo="item"
           @click.native="changeCurrentConversation(item)"
           type="fenzu"
@@ -51,7 +51,8 @@ export default {
       currClickFenzu: '', // 当前点击的分组
       currEditFenzu: '', // 当前编辑的分组
       currEditFenzuTo: '', // 被编辑分组的新名字
-      newFenzu: '' // 新添加分组的名称
+      newFenzu: '', // 新添加分组的名称
+      fenzuMap: {} // 该用户的好友分组
     }
   },
   computed: {
@@ -62,7 +63,7 @@ export default {
       return this.$store.state.app.onlineUser
     },
     fenzu() { // 用户的分组列表
-      return this.newFenzu ? Object.keys(this.userInfo.friendFenzu || {}).concat(this.newFenzu) : Object.keys(this.userInfo.friendFenzu || {})
+      return this.newFenzu ? Object.keys(this.fenzuMap || {}).concat(this.newFenzu) : Object.keys(this.fenzuMap || {})
     },
     beizhu() { // 备注map
       return this.userInfo.friendBeizhu || {}
@@ -74,24 +75,32 @@ export default {
       const conversationList = JSON.parse(JSON.stringify(this.firendsList))
       const offlineUsers = []
       const onlineUsers = []
+      //补充user_id
       conversationList.forEach(item => {
-        item.beizhu = this.beizhu[item._id] ? this.beizhu[item._id] : ''
-        this.onlineUserIds.includes(item._id) ? onlineUsers.push(item) : offlineUsers.push(item)
+        item._id = item.user_id
+      })
+      conversationList.forEach(item => {
+        item.beizhu = this.beizhu[item.user_id] ? this.beizhu[item.user_id] : ''
+        this.onlineUserIds.includes(item.user_id) ? onlineUsers.push(item) : offlineUsers.push(item)
       })
       return [...onlineUsers, ...offlineUsers]
     },
     outcomeConversation() { // 根据分组来分类不同的好友
       const conversationList = JSON.parse(JSON.stringify(this.hasBeizhuList))
-      const fenzuMap = this.userInfo.friendFenzu // {分组1: [id1, id2, ...], 分组2: [id3, id4, ...]}
+      const fenzuMap = this.fenzuMap // {分组1: [id1, id2, ...], 分组2: [id3, id4, ...]}
       const fenzuKeys = Object.keys(fenzuMap) // [分组1, 分组2, ...]
       const res = {}
       fenzuKeys.forEach(item => {
         res[item] = []
       })
+      console.log("fenzuMap", fenzuMap)
+      console.log("fenzuKeys", fenzuKeys)
+      console.log("conversationList", conversationList)
       for (let i = 0; i < conversationList.length; i++) {
         const item = conversationList[i]
         fenzuKeys.forEach(fenzuItem => {
-          if (fenzuMap[fenzuItem].includes(item._id)) {
+          console.log(item)
+          if (fenzuMap[fenzuItem].includes(item.user_id)) {
             res[fenzuItem].push(item)
             conversationList.splice(i, 1)
             i--
@@ -109,7 +118,7 @@ export default {
       for (const key in obj) {
         if (obj.hasOwnProperty(key)) {
           let num = 0
-          const itemIds = obj[key].map(item => item._id)
+          const itemIds = obj[key].map(item => item.user_id)
           itemIds.forEach(id => {
             this.onlineUserIds.includes(id) && num++
           })
@@ -122,16 +131,14 @@ export default {
   methods: {
     /** 获取所有的好友 */
     async getMyFriends() {
-      const id = this.userInfo._id
-      const { data, status } = await this.$http.getMyFriends(id)
-      
-      if (data.status === 2000 && (100 <= status <= 400)) {
+      const { data } = await this.$http.getMyFriends()
+      if (data.success) {
         const { data: friendList } = data
         friendList.forEach(item => {
           item.conversationType = conversationTypes.friend
-          item.myNickname = this.userInfo.nickname
-          item.myId = this.userInfo._id
-          item.myAvatar = this.userInfo.photo
+          item.myNickname = this.userInfo.user_nickname
+          item.myId = this.userInfo.user_id
+          item.myAvatar = this.userInfo.user_profile
         })
         this.conversationList = friendList
         this.$store.dispatch('app/SET_ALL_CONVERSATION', friendList)
@@ -141,11 +148,29 @@ export default {
         })
         // this.changeCurrentConversation(this.conversationList[0] || {})
         // 把好友的id保存到本地，可能会用到
+        console.log("好友",friendList)
         const saveLocalData = friendList.map(item => {
-          return item._id
+          return item.user_id
         })
+        this.initFenzu(friendList)
         saveMyFriendsToLocalStorage(saveLocalData)
       }
+    },
+    initFenzu(friendList){
+      var t = {}
+      for(var key in friendList) {
+        var item = friendList[key]
+        //默认为空的在我的好友这
+        var name = item.friend_group.length == 0 ? "我的好友":item.friend_group
+        t[name] = []
+      }
+      for(var key in friendList) {
+         var item = friendList[key]
+        //默认为空的在我的好友这
+        var name = item.friend_group.length == 0 ? "我的好友":item.friend_group
+        t[name].push(item.user_id)
+      }
+      this.fenzuMap = t
     },
     changeCurrentConversation(item) {
       this.$emit('setCurrentConversation', item)
@@ -179,8 +204,6 @@ export default {
       }
       const params = {fenzuName: this.currClickFenzu, userId: this.userInfo._id}
       await this.$http.deleteFenzu(params)
-      const userInfo = await this.$http.getUserInfo(this.userInfo._id)
-      this.$store.dispatch('user/LOGIN', userInfo.data.data)
     },
     setEditFenzu() {
       this.currEditFenzu = this.currEditFenzuTo = this.currClickFenzu
@@ -193,7 +216,7 @@ export default {
       const { data } = await this.$http.editFeznu({
         oldFenzu: this.currEditFenzu,
         newFenzu: this.currEditFenzuTo,
-        userId: this.userInfo._id
+        userId: this.userInfo.user_id
       })
       if (data.status === 2000) {
         const userInfo = await this.$http.getUserInfo(this.userInfo._id)

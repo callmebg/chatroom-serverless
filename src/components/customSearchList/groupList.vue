@@ -1,20 +1,20 @@
 <template>
   <div class="custom-search-list-com">
-    <div class="wrapper" v-for="item in searchlist" :key="item._id">
+    <div class="wrapper" v-for="item in searchlist" :key="item.group_id">
       <div class="details">
         <el-avatar
           class="avatar"
           shape="square"
-          :src="IMG_URL + item.img"
+          :src="IMG_URL+item.group_profile"
         >
         </el-avatar>
         <div class="info">
           <p class="item primary-font nickname">
             <span>
-              {{item.title}}
+              {{item.group_name}}
             </span>
           </p>
-          <p class="item secondary-font">{{ item.desc }}</p>
+          <p class="item secondary-font">{{ item.group_description }}</p>
         </div>
       </div>
       <div class="operation">
@@ -22,7 +22,7 @@
           type="primary"
           size="small"
           icon="el-icon-plus"
-          :disabled="(groups || []).includes(item._id)"
+          :disabled="(groups || []).includes(item.group_id)"
           @click="showAdditionDialog(item)"
         >添加
         </el-button>

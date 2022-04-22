@@ -1,13 +1,10 @@
 <template>
   <div class="chat-area__header">
     <transition name="roll">
-      <div class="header-wrapper" v-if="currentConversation.roomid">
+      <div class="header-wrapper">
         <div class="header-title">
           <i @click="setCurrentUI" v-if="device === 'Mobile'" style="margin-left: -15px;" class="el-icon-arrow-left"></i>
           <span>{{haderTitle}}</span>
-          <!-- <i :class="!showSettingPanel ? 'el-icon-arrow-down curp' : 'el-icon-arrow-up curp'"></i> -->
-          <!-- <i class="icon-qun iconfont iconic iconic-group" v-if="currentConversation.conversationType === 'GROUP'"></i> -->
-          <!-- <i class="el-icon-user-solid iconic " v-else></i> -->
         </div>
         <div class="header-operation">
           <i class="operation-item el-icon-menu" title="设置" @click.stop="toggleShowSettingPanel"></i>

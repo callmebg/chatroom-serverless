@@ -9,7 +9,7 @@
         :key="index"
         @click="choose('face/'+item)"
       >
-        <img width="80" height="80" :src="IMG_URL + 'face/' + item" alt="" srcset="">
+        <img width="80" height="80" :src="IMG_URL + 'face/' + item" alt="" srcset=""/>
       </div>
     </div>
   </div>

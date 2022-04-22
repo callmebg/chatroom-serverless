@@ -280,7 +280,7 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit('connect', '1')
+    this.$socket.emit("connect", {userId: this.$store.state.user.userInfo.user_id, userName:this.$store.state.user.userInfo.user_nickname})
     if (this.device === 'Mobile') {
       document.addEventListener('click', () => {
         this.asideTranslateX = -70

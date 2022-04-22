@@ -3,6 +3,10 @@
     <div class="operation-list">
       <span
         class="oper-item operation-text"
+        @click.stop="showInfo"
+      >查看资料</span>
+      <span
+        class="oper-item operation-text"
         @click.stop="showFenzu"
         v-if="currentConversation.conversationType === conversationTypes.friend"
       >切换分组</span>
@@ -40,6 +44,9 @@ export default {
     }
   },
   methods: {
+    showInfo() {
+
+    },
     showFenzu() {
       this.$eventBus.$emit('toggleFenzuModal', {
         show: true,

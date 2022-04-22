@@ -6,9 +6,8 @@ export default {
    * 根据用户名获取其对应的群聊，用户名在user实体中对应name字段
    * @param {Object} data 
    */
-  getMyGroup(data) {
-    let { userName } = data
-    return request.get(`group/getmygroup?userName=${userName}`)
+  getMyGroup() {
+    return request.get(`group/getMyGroup`)
   },
   /**
    * 根据id获取群聊详情
@@ -16,11 +15,11 @@ export default {
    */
   getGroupInfo(data) {
     let { id } = data
-    return request.get(`group/groupinfo?id=${id}`)
+    return request.get(`group/groupInfo?id=${id}`)
   },
   preFetchGroup(data) {
-    const { q, page, pageSize } = data // type可以是title以及code
-    return request.get(`group/prefetchgroup?q=${q}&page=${page}&pageSize=${pageSize}`)
+    const { q, page, pageSize } = data // q可以是id 或者名字
+    return request.get(`group/prefetchGroup?q=${q}&page=${page}&pageSize=${pageSize}`)
   },
   /**
    * 创建群聊

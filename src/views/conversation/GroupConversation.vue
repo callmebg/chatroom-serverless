@@ -37,9 +37,8 @@ export default {
       conversationList: [],
       activeFenzu: '',
       groupCategory: [
-        {id: 0, category: 'myHolderGroup', text: '我创建的群聊'},
-        {id: 1, category: 'myManagerGroup', text: '我管理的群聊'},
-        {id: 2, category: 'myJoinGroup', text: '我加入的群聊'}
+        { id: 0, category: 'myHolderGroup', text: '我创建的群聊' },
+        { id: 2, category: 'myJoinGroup', text: '我加入的群聊' }
       ]
     }
   },
@@ -50,35 +49,35 @@ export default {
     myHolderGroup() {
       return this.conversationList.filter(item => item.holder)
     },
-    myManagerGroup() {
-      return this.conversationList.filter(item => item.manager)
-    },
     myJoinGroup() {
-      return this.conversationList.filter(item => !item.holder && !item.manager)
+      return this.conversationList.filter(item => !item.holder)
     },
     groupCategoryMap() {
       return {
         myHolderGroup: this.myHolderGroup,
-        myManagerGroup: this.myManagerGroup,
         myJoinGroup: this.myJoinGroup
       }
     }
   },
   methods: {
+    //群主必定在群里，所以查加入的群及信息即可
     async getMyGroup() {
-      const userName = this.userInfo.name
-      const { data, status } = await this.$http.getMyGroup({userName})
-      if (data.status === 2000 && (100 <= status <= 400)) {
+      const { data } = await this.$http.getMyGroup()
+      if (data.success) {
         const { data: groupList } = data
         groupList.forEach(item => {
           item.conversationType = conversationTypes.group
           item.isGroup = true
-          item.roomid = item.groupId._id
+          item.roomid = item.group_id
+          item.holder = item.group_owner == this.$store.state.user.userInfo.user_id //是否为该群群主
         })
         this.conversationList = groupList
-        this.$store.dispatch('app/SET_ALL_CONVERSATION', this.conversationList)
-        const saveLocalData = groupList.map(item => item.groupId._id)
-        saveMyGroupToLocalStorage(saveLocalData)
+          this.$store.dispatch(
+            'app/SET_ALL_CONVERSATION',
+            this.conversationList
+          )
+          const saveLocalData = groupList.map(item => item.group_id)
+          saveMyGroupToLocalStorage(saveLocalData)
       }
     },
     createGroup() {
@@ -89,7 +88,7 @@ export default {
     },
     joinChatRoom() {
       this.conversationList.forEach(item => {
-        this.$socket.emit("join", item)
+        this.$socket.emit('join', item)
       })
     }
   },
@@ -97,8 +96,10 @@ export default {
     conversationList: {
       handler() {
         this.joinChatRoom()
-      }, deep: true, immediate: true
-    },
+      },
+      deep: true,
+      immediate: true
+    }
   },
   components: {
     conversationItem
@@ -108,7 +109,7 @@ export default {
     this.$eventBus.$on('createGroupSuccess', () => {
       this.getMyGroup()
     })
-  },
+  }
 }
 </script>
 

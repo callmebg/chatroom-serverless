@@ -25,7 +25,7 @@ export default {
   /**获取用户（搜索） */
   preFetchUser(data) {
     let { type, q, page, pageSize } = data
-    return request.get(`user/prefetchuser?q=${q}&page=${page}&pageSize=${pageSize}`)
+    return request.get(`user/prefetchUser?q=${q}&page=${page}&pageSize=${pageSize}`)
   },
   /**添加分组 */
   addNewFenzu(data) {
