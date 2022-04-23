@@ -47,7 +47,6 @@ import { debounce } from '@/utils'
 import { searchObjectMap} from '@/const'
 import userList from '@/components/customSearchList/userList'
 import groupList from '@/components/customSearchList/groupList'
-import EmptySvg from '@/SVGComponents/empty'
 export default {
   name: "Add",
   data() {
@@ -150,8 +149,7 @@ export default {
   },
   components: {
     userList,
-    groupList,
-    EmptySvg
+    groupList
   },
   mounted() {
     const addPage = document.querySelector('.add-page')

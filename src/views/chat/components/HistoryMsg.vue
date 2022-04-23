@@ -58,7 +58,6 @@
 
 <script>
 import msgItem from './HistoryMsgItem'
-import emptySvg from '@/SVGComponents/empty'
 import { debounce } from '@/utils'
 const typeTextToValue = {
   '全部': 'all',
@@ -137,8 +136,7 @@ export default {
     }
   },
   components: {
-    msgItem,
-    emptySvg
+    msgItem
   },
   mounted() {
     this.getHistoryMsg()
