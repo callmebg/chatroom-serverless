@@ -50,7 +50,7 @@ Vue.config.productionTip = false
 Vue.prototype.$toast = Toast
 Vue.prototype.$http = axios
 Vue.prototype.$eventBus = new Vue()
-Vue.prototype.$socket = SocketService.Instance
+Vue.prototype.$socket = SocketService.getInstance()
 
 /* eslint-disable no-new */
 new Vue({

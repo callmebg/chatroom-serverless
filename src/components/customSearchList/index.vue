@@ -85,7 +85,7 @@ export default {
       }, 500)
       const validateSysUsr = this.sysUsers.filter(item => item.code === '111111')[0]
       const val = {
-        roomid: validateSysUsr._id + '-' + this.seleceItem._id,
+        roomId: validateSysUsr._id + '-' + this.seleceItem._id,
         senderId: this.userInfo._id,
         senderName: this.userInfo.name,
         senderNickname: this.userInfo.nickname,

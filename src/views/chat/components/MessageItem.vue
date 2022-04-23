@@ -7,7 +7,7 @@
       v-if="messageitem.messageType !== MSG_TYPES.sys"
       class="avatar"
       size="large"
-      :src="messageitem.senderId === userInfo._id ? IMG_URL + userInfo.photo : IMG_URL + messageitem.senderAvatar"
+      :src="messageitem.senderId === userInfo.user_id ? IMG_URL + userInfo.user_profile : IMG_URL + messageitem.senderAvatar"
       @error="() => true"
     >
       <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt srcset>
@@ -19,7 +19,7 @@
       <span
         v-if="messageitem.messageType !== MSG_TYPES.sys"
         class="secondary-font header"
-        :style="messageitem.senderId === userInfo._id ? {'flex-direction': 'row-reverse'} : {}"
+        :style="messageitem.senderId === userInfo.user_id ? {'flex-direction': 'row-reverse'} : {}"
       >
         <span v-if="currentConversation.isGroup" class="item name">
           <router-link :to="`/user/${messageitem.senderId}`" class="not-link" style="color: #606266">
@@ -28,7 +28,7 @@
         </span>
         <span
           class="item time"
-          :style="messageitem.senderId === userInfo._id ? {'float': 'right'} : {}"
+          :style="messageitem.senderId === userInfo.user_id ? {'float': 'right'} : {}"
         >{{messageitem.time | formatDateToZH}}</span>
       </span>
       <div
@@ -43,10 +43,10 @@
             :message="messageitem"
             :img-type-msg-list="imgTypeMsgList"
           />
-          <el-tooltip class="item" effect="dark" :content="isAllRead ? '已读' : '未读'" placement="top">
+          <el-tooltip class="item" effect="dark" :content="messageitem.isRead ? '已读' : '未读'" placement="top">
             <i
-              v-if="!currentConversation.isGroup && messageitem.senderId === userInfo._id"
-              :class="isAllRead ? 'is-read iconfont icon-RadioSuccess' : 'is-read iconfont icon-radio'"
+              v-if="!currentConversation.isGroup && messageitem.senderId === userInfo.user_id"
+              :class="messageitem.isRead ? 'is-read iconfont icon-RadioSuccess' : 'is-read iconfont icon-radio'"
             />
           </el-tooltip>
         </span>
@@ -82,7 +82,7 @@ export default {
       } else if (this.messageitem.messageType === 'img') {
         res = 'img-content'      
       } else {
-        res = this.messageitem.senderId === this.userInfo._id ? 'normal-content isme' : 'normal-content'
+        res = this.messageitem.senderId === this.userInfo.user_id ? 'normal-content isme' : 'normal-content'
       }
       return res
     },
@@ -93,16 +93,16 @@ export default {
           width: 'auto',
           'text-align': 'center'
         }
-      } else if (this.messageitem.senderId === this.userInfo._id) {
+      } else if (this.messageitem.senderId === this.userInfo.user_id) {
         res = {'flex-direction': 'row-reverse', 'margin-left': 'calc(100% - 300px)'}
       }
       return res
     },
     messageWraperStyle() {
       let res = {}
-      if (this.messageitem.messageType === MSG_TYPES.img && this.messageitem.senderId === this.userInfo._id) {
+      if (this.messageitem.messageType === MSG_TYPES.img && this.messageitem.senderId === this.userInfo.user_id) {
         res = {'float': 'right'}
-      } else if (this.messageitem.senderId === this.userInfo._id) {
+      } else if (this.messageitem.senderId === this.userInfo.user_id) {
         res = {'background-color': 'hsla(149, 78%, 53%, 1)', 'float': 'right'}
       }
       return res
@@ -112,14 +112,6 @@ export default {
     },
     userIsReadMsg() {
       return this.$store.state.news.userIsReadMsg
-    },
-    isAllRead() { // 是否两个用户都阅读了消息
-      const roomidArr = this.messageitem.roomid.split("-")
-      // const roomidArrHash = roomidArr[0]&roomidArr[1]
-      const isReadUserArr = this.messageitem.isReadUser
-      const flag1 = isReadUserArr.includes(roomidArr[0]) && isReadUserArr.includes(roomidArr[1])
-      const flag2 = this.userIsReadMsg[this.messageitem.roomid] || false
-      return this.messageitem.time < this.lastEnterTime || flag1 || flag2
     },
     device() {
       return this.$store.state.device.deviceType

@@ -138,6 +138,7 @@ export default {
           item.conversationType = conversationTypes.friend
           item.myNickname = this.userInfo.user_nickname
           item.myId = this.userInfo.user_id
+          item.roomId = this.userInfo.user_id + '-' + item.user_id
           item.myAvatar = this.userInfo.user_profile
         })
         this.conversationList = friendList

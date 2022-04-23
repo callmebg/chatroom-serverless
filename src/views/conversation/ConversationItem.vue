@@ -7,13 +7,13 @@
       <div class="conversation-info">
         <div class="wrapper">
           <el-badge
-            :value="unreadNews[conversationInfo.roomid]"
-            :hidden="unreadNews[conversationInfo.roomid] === 0"
+            :value="unreadNews[conversationInfo.roomId]"
+            :hidden="unreadNews[conversationInfo.roomId] === 0"
             class="item el-badge"
           >
             <el-avatar
               size="large"
-              :src="IMG_URL + conversationInfo.groupId.img"
+              :src="IMG_URL + conversationInfo.group_profile"
               @error="() => true"
             >
               <img
@@ -24,11 +24,11 @@
           
           <div class="conversation-detail">
             <span class="top-item primary-font detail-item ellipsis space-bw" style="display: flex">
-              <span class="ellipsis">{{conversationInfo.groupId.title}}</span>
+              <span class="ellipsis">{{conversationInfo.group_name}}</span>
             </span>
             <span class="bottom-item secondary-font detail-item ellipsis space-bw" style="display: flex">
               <span v-if="type === 'fenzu'">
-                {{conversationInfo.groupId.desc}}
+                {{conversationInfo.group_description}}
               </span>
               <span v-if="type === 'recent'" style="text-overflow: ellipsis; overflow: hidden;">
                 {{lastNews}}
@@ -43,8 +43,8 @@
       <div class="conversation-info" @contextmenu.prevent.stop="showMenu">
         <div class="wrapper">
           <el-badge
-            :value="unreadNews[conversationInfo.roomid]"
-            :hidden="unreadNews[conversationInfo.roomid] === 0"
+            :value="unreadNews[conversationInfo.roomId]"
+            :hidden="unreadNews[conversationInfo.roomId] === 0"
             class="item el-badge"
           >
             <el-avatar
@@ -91,7 +91,7 @@ const conversationObj = {
   photo: "",
   signature: "",
   id: "",
-  roomid: ""
+  roomId: ""
 };
 import './../../../static/iconfont/iconfont.css'
 export default {

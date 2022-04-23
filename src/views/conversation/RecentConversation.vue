@@ -49,9 +49,9 @@ export default {
       const conversationList = JSON.parse(JSON.stringify(this.conversationList))
       return conversationList.length && conversationList.map(item => {
         item.beizhu = this.friendBeizhu[item._id] ? this.friendBeizhu[item._id] : ''
-        item.lastNews = this.lastNewsMap[item.roomid] ? this.lastNewsMap[item.roomid] : ''
-        item.lastNewsTime = this.lastNewsMap[item.roomid] ?
-            (this.lastNewsMap[item.roomid].time ? new Date(this.lastNewsMap[item.roomid].time) : new Date(Date.now()-2000)) :
+        item.lastNews = this.lastNewsMap[item.roomId] ? this.lastNewsMap[item.roomId] : ''
+        item.lastNewsTime = this.lastNewsMap[item.roomId] ?
+            (this.lastNewsMap[item.roomId].time ? new Date(this.lastNewsMap[item.roomId].time) : new Date(Date.now()-2000)) :
             new Date(Date.now()-2000) // -2000ms为了解决没有最近消息的会话的lastNews一直为当前时间（这样会和新发送的消息的会话冲突）
         return item
       }).sort((a, b) => {
@@ -61,7 +61,7 @@ export default {
       // this.conversationList.forEach(item => {
       //   let resItem = {}
       //   resItem.beizhu = this.friendBeizhu[item._id] ? this.friendBeizhu[item._id] : ''
-      //   resItem.lastNews = this.lastNewsMap[item.roomid] ? this.lastNewsMap[item.roomid] : ''
+      //   resItem.lastNews = this.lastNewsMap[item.roomId] ? this.lastNewsMap[item.roomId] : ''
       //   res.push({...resItem, ...item})
       //   console.log(res)
       // })
@@ -82,7 +82,7 @@ export default {
       const conversationList = (list || []).map(item => {
         let res = {}
         res.createDate = item.createDate
-        res.roomid = item.userM._id + '-' + item.userY._id
+        res.roomId = item.userM._id + '-' + item.userY._id
         if (item.userM._id === myId && item.userY._id !== myId) {
           res = {
             ...res, ...item.userY, 
@@ -106,7 +106,7 @@ export default {
       // 获取最后一条消息存入Vuex
       const reqArr = []
       conversationList.forEach(item => {
-        const req = this.$http.getLastNews({roomid: item.roomid})
+        const req = this.$http.getLastNews({roomId: item.roomId})
         reqArr.push(req)
       })
       Promise.all(reqArr).then(res => {
@@ -114,7 +114,7 @@ export default {
           return item.data.data
         })
         const lastNewsMap = lastNewsArr.reduce((map, item) => {
-          item ? map[item.roomid] = item : null
+          item ? map[item.roomId] = item : null
           return map
         }, {})
         this.$store.dispatch('news/SET_LAST_NEWS', {
@@ -140,12 +140,12 @@ export default {
           groupList.forEach(item => {
             item.conversationType = 'GROUP'
             item.isGroup = true
-            item.roomid = item.groupId._id
+            item.roomId = item.groupId._id
           })
-          const groupRoomids = groupList.map(item => item.groupId._id)
+          const grouproomIds = groupList.map(item => item.groupId._id)
           const reqArr = []
-          groupRoomids.forEach(item => {
-            const req = this.$http.getGroupLastNews({roomid: item})
+          grouproomIds.forEach(item => {
+            const req = this.$http.getGroupLastNews({roomId: item})
             reqArr.push(req)
           })
           Promise.all(reqArr).then(res => {
@@ -154,7 +154,7 @@ export default {
             })
             console.log(lastNewsArr)
             const lastNewsMap = lastNewsArr.reduce((map, item) => {
-              item ? map[item.roomid] = item : null
+              item ? map[item.roomId] = item : null
               return map
             }, {})
             this.$store.dispatch('news/SET_LAST_NEWS', {

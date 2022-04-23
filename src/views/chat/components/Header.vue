@@ -45,7 +45,7 @@ export default {
       const currentConversation = this.currentConversation
       let res = ''
       if (currentConversation.isGroup) {
-        res = currentConversation.groupId.title + `（${currentConversation.groupId.userNum}）`
+        res = currentConversation.group_name + `（${currentConversation.userNum}）`
       } else {
         res = this.beizhu[currentConversation._id] ? this.beizhu[currentConversation._id] + `（${currentConversation.nickname}）` : currentConversation.nickname
       }

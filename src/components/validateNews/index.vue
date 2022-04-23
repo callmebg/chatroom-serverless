@@ -149,7 +149,7 @@ export default {
   },
   mounted() {
     this.$store.dispatch('news/SET_UNREAD_NEWS', {
-      roomid: this.systemValidateUsers._id + '-' + this.userInfo._id,
+      roomId: this.systemValidateUsers._id + '-' + this.userInfo._id,
       count: 0,
       type: SET_UNREAD_NEWS_TYPE_MAP.clear
     })

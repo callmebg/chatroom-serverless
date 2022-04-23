@@ -66,7 +66,7 @@ export default {
           myNickname:"chenchao"
           nickname:"chenchao2"
           photo:"/uploads/2019-11-10/f-1573390856438-f1573390856092.png"
-          roomid:"5d9d929f49db3825a8e76a04-5d9d903f49db3825a8e76a03"
+          roomId:"5d9d929f49db3825a8e76a04-5d9d903f49db3825a8e76a03"
           signature:"hahahha,笑死我了...."
        * }
        */

@@ -118,21 +118,21 @@ export default {
     }),
     messagesOutcome() {
       return this.messages.filter(item => {
-        return item.roomid === this.currentConversation.roomid
+        return item.roomId === this.currentConversation.roomId || this.swaproomId(item.roomId) === this.currentConversation.roomId
       })
     },
     device() {
       return this.$store.state.device.deviceType
     }
   },
-  sockets: {
+  methods: {
     receiveMessage(news) {
       console.log("收到新的消息", news)
       this.messages = [...this.messages, news]
-      if (news.roomid === this.currentConversation.roomid) {
+      if (news.roomId === this.currentConversation.roomId) {
         setTimeout(() => {
           this.$store.dispatch("news/SET_UNREAD_NEWS", {
-            roomid: news.roomid,
+            roomId: news.roomId,
             count: 0,
             type: SET_UNREAD_NEWS_TYPE_MAP.clear
           })
@@ -141,9 +141,15 @@ export default {
     },
     conversationList(list) {
       // console.log("当前会话列表", list)
-    }
-  },
-  methods: {
+    },
+    swaproomId(roomId){
+      var two = roomId.split("-")
+      if(two.length == 2) {
+        return two[1] + '-' + two[0]
+      }else{
+        return roomId
+      }
+    },
     test(e) {
       console.log(e, 123132)
     },
@@ -156,15 +162,11 @@ export default {
     },
     generatorMessageCommon() {
       return {
-        roomid: this.currentConversation.roomid,
-        senderId: this.userInfo._id,
-        snderName: this.userInfo.name,
-        senderNickname: this.userInfo.nickname,
-        senderAvatar: this.userInfo.photo,
-        time: Date.now(),
-        isReadUser: [this.userInfo._id],
+        roomId: this.currentConversation.roomId,
+        senderId: this.userInfo.user_id,
         conversationType: this.currentConversation.conversationType,
-        currentConversation: this.currentConversation
+        currentConversation: this.currentConversation,
+        time: Date.now()
       }
     },
     getImgUploadResult(res) {
@@ -213,7 +215,7 @@ export default {
         this.$store.dispatch('news/SET_LAST_NEWS', {
           type: 'edit',
           res: {
-            roomid: this.currentConversation.roomid,
+            roomId: this.currentConversation.roomId,
             news: newMessage
           }
         })
@@ -237,7 +239,7 @@ export default {
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
-          roomid: this.currentConversation.roomid,
+          roomId: this.currentConversation.roomId,
           news: newMessage
         }
       })
@@ -259,12 +261,13 @@ export default {
         message: xss(this.messageText),
         messageType: "text",
       }
+      console.log("sendNewMessage", newMessage)
       this.messages = [...this.messages, newMessage]
       this.$socket.emit("sendNewMessage", newMessage)
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
-          roomid: this.currentConversation.roomid,
+          roomId: this.currentConversation.roomId,
           news: newMessage
         }
       })
@@ -280,18 +283,19 @@ export default {
       if (this.isLoading) return // 防止重复发起请求
       this.isLoading = true
       init && this.setLoading(true) // 只有在第一次加载的时候才让ChatArea有loading动画，后面加载时不显示
-      const { roomid, conversationType } = this.currentConversation
+      const { roomId, conversationType } = this.currentConversation
       const params = {
-        roomid,
+        roomId,
         page: this.page,
         pageSize: this.pageSize
       }
       if (conversationType === conversationTypes.friend) {
-        const { data, status } = await this.$http.getRecentNews(params)
+        const { data } = await this.$http.getRecentNews(params)
         this.setLoading(false)
-        if (data.status === 2000 && status === 200) {
+        if (data.success) {
           this.isLoading = false
           data.data.reverse()
+          
           this.messages = [...data.data, ...this.messages]
           if (data.data.length < this.pageSize) {
             this.hasMore = false
@@ -303,7 +307,7 @@ export default {
         const { data, status } = await this.$http.getRecentGroupNews(params)
         this.setLoading(false)
         this.isLoading = false
-        if (data.status === 2000 && status === 200) {
+        if (data.success) {
           data.data.reverse()
           this.messages = [...data.data, ...this.messages]
           if (data.data.length < this.pageSize) {
@@ -340,7 +344,7 @@ export default {
         this.$store.dispatch('news/SET_LAST_NEWS', {
           type: 'edit',
           res: {
-            roomid: this.currentConversation.roomid,
+            roomId: this.currentConversation.roomId,
             news: newMessage
           }
         })
@@ -382,9 +386,8 @@ export default {
     console.log('chatArea created')
     document.addEventListener('click', this.handlerShowEmoji)
     this.getRecentNews()
-    this.$http.getQiniuToken().then(res => {
-      const { data } = res
-      this.token = data.data
+    this.$eventBus.$on('receiveMessage', (data) => {
+      this.receiveMessage(data)
     })
   },
   mounted() {

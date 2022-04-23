@@ -3,8 +3,8 @@ import request from '@/utils/request'
 
 export default {
   getRecentNews(data) {
-    const { roomid, page, pageSize } = data
-    return request.get(`news/recent?roomid=${roomid}&page=${page}&pageSize=${pageSize}`)
+    const { roomId, page, pageSize } = data
+    return request.get(`news/recent?roomId=${roomId}&page=${page}&pageSize=${pageSize}`)
   },
   getLastNews(data) {
     return request.post(`news/last`, data)

@@ -4,13 +4,15 @@ export default class SocketService {
    * 单例
    */
   static instance = null
-  static get Instance() {
+  static getInstance() {
     if (!this.instance) {
       this.instance = new SocketService()
     }
     return this.instance
   }
 
+  // vue 实例
+  vue = null
   // 和服务端连接的socket对象
   ws = null
 
@@ -39,15 +41,13 @@ export default class SocketService {
       this.connectRetryCount = 0
     }
     // 1.连接服务端失败
-    // 2.当连接成功之后, 服务器关闭的情况(连接失败重连)
+    // 2.当连接成功之后, 服务器关闭的情况(连接失败重连) (本项目后端10min 断连)
     this.ws.onclose = () => {
       console.log('服务端断开连接')
-      /*
       this.connectRetryCount++
-      setTimeout(() => {
-        this.connect()
-      }, 500 * this.connectRetryCount)
-      */
+      this.connect()
+      // 发送新的连接信息
+      this.emit("connect", {userId: this.vue.$store.state.user.userInfo.user_id, userName:this.vue.$store.state.user.userInfo.user_nickname})
     }
     // 得到服务端发送过来的数据
     this.ws.onmessage = msg => {
@@ -56,11 +56,14 @@ export default class SocketService {
       switch(data["user"])
       {
         case "system":
-          Message({
+          this.vue.$notify({
+            title: '收到系统消息',
             message: data["message"],
-            type: "info",
-            duration: 3000
-          });
+            type: 'info'
+          })
+          break
+        case "friend":
+          this.vue.$eventBus.$emit("receiveMessage", data["message"])
           break
       }
     }
@@ -95,5 +98,9 @@ export default class SocketService {
 
   emit(action, data) {
     this.send({ action: action, data: data })
+  }
+
+  setVue(vue) {
+    this.vue = vue
   }
 }

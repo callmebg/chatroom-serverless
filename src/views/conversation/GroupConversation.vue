@@ -68,7 +68,8 @@ export default {
         groupList.forEach(item => {
           item.conversationType = conversationTypes.group
           item.isGroup = true
-          item.roomid = item.group_id
+          item.roomId = item.group_id
+          item._id = item.group_id
           item.holder = item.group_owner == this.$store.state.user.userInfo.user_id //是否为该群群主
         })
         this.conversationList = groupList

@@ -100,7 +100,7 @@ export default {
       if(this.isLoading) return
       this.isLoading = true
       const params = {
-        roomid: this.currentConversation.roomid,
+        roomId: this.currentConversation.roomId,
         type: typeTextToValue[this.searchType],
         query: this.searchWord,
         date: this.searchDate,

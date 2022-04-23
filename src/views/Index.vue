@@ -70,30 +70,30 @@ export default {
   watch: {
     currentConversation: {
       handler(newVal, oldVal) {
-        if (!newVal || !newVal.roomid) return
+        if (!newVal || !newVal.roomId) return
         try {
-          if(newVal.roomid !== oldVal.roomid) {
+          if(newVal.roomId !== oldVal.roomId) {
             this.$store.dispatch('news/SET_UNREAD_NEWS', {
-              roomid: this.currentConversation && this.currentConversation.roomid,
+              roomId: this.currentConversation && this.currentConversation.roomId,
               count: 0,
               type: SET_UNREAD_NEWS_TYPE_MAP.clear
             })
-            this.$store.dispatch('news/SET_LAST_NEWS', {type: 'default', roomid: newVal.roomid})
+            this.$store.dispatch('news/SET_LAST_NEWS', {type: 'default', roomId: newVal.roomId})
             this.$store.dispatch('app/SET_CURRENT_CONVERSATION', newVal)
             this.$store.dispatch('app/SET_RECENT_CONVERSATION', {type: 'add', data: newVal})
             // 将该会话下的消息设置为已读begin
             newVal.conversationType === "FRIEND" && this.$http.userIsReadMsg({
-              roomid: newVal.roomid, userId: this.userInfo._id
+              roomId: newVal.roomId, userId: this.userInfo._id
             }).then(res => {
               // 用户切换会话来阅读消息
               if (res.status >= 400 || res.data.status !== 2000) return
               this.$socket.emit('isReadMsg', {
-                roomid: newVal.roomid,
+                roomId: newVal.roomId,
                 status: true
               }) // 1. 提示对方用户进入该会话
               if (oldVal.conversationType === "FRIEND") {
                 this.$socket.emit('isReadMsg', {
-                  roomid: oldVal.roomid || '',
+                  roomId: oldVal.roomId || '',
                   status: false
                 })
               } // 2. 提示对方用户退出该会话

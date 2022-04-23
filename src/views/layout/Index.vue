@@ -92,18 +92,13 @@ const systemPictureMap = {
   city: require('./../../../static/image/theme/city.jpg'),
   ocean: require('./../../../static/image/theme/ocean.jpg')
 }
-const notifySoundMap = {
-  default: require('./../../../static/audio/default.mp3'),
-  none: ''
-}
 export default {
   name: 'Layout',
   data() {
     return {
       include: ['Home'], // keepAlive缓存相关
       bgImgUrl: '',
-      NotifyAudio: '',
-      // notifySound: '',
+      NotifyAudio: NotifyAudio,
       showTheme: false,
       showMain: true, // 聊天区域是否展示
       asideTranslateX: -70,
@@ -117,8 +112,7 @@ export default {
     ...mapState('theme', {
       opacity: 'opacity',
       blur: 'blur',
-      bgImg: 'bgImg',
-      notifySound: 'notifySound'
+      bgImg: 'bgImg'
     }),
     allConversation() {
       return this.$store.state.app.allConversation
@@ -131,13 +125,6 @@ export default {
     }
   },
   watch: {
-    userInfo: {
-      handler(newVal, oldVal) {
-        this.userGoOnline()
-      },
-      deep: true,
-      immediate: true
-    },
     bgImg: {
       handler(bgImg) {
         /**如果是base64就直接使用否则从系统自带图片获取 */
@@ -149,13 +136,6 @@ export default {
           this.bgImgUrl = systemPictureMap[bgImg]
         }
         */
-      },
-      deep: true,
-      immediate: true
-    },
-    notifySound: {
-      handler(notifySound) {
-        this.NotifyAudio = notifySoundMap[notifySound]
       },
       deep: true,
       immediate: true
@@ -181,76 +161,7 @@ export default {
     theme
     // chatView
   },
-  /*
-  sockets: {
-    connect: function () {
-      console.log('socket connected', this.$socket.id)
-    },
-    onlineUser(data) {
-      console.log('当前在线用户列表', data)
-      const onlineUserIdArr = Object.values(data).map(item => item._id)
-      this.$store.dispatch('app/SET_ONLINE_USER', onlineUserIdArr)
-    },
-    receiveMessage(news) {
-      this.$refs['audio'].play()
-      console.log('收到新消息', news)
-      const message = news.message ? news.message.slice(0, 10) : ''
-      this.$notify({
-        title: '收到新消息',
-        message,
-        type: 'success'
-      })
-      this.$store.dispatch('news/SET_UNREAD_NEWS', {
-        roomid: news.roomid,
-        count: 1,
-        type: 'ADD'
-      })
-      const senderConversation = this.allConversation.find(item => item.roomid === news.roomid)
-      this.$store.dispatch('app/SET_RECENT_CONVERSATION', {
-        type: 'add',
-        data: senderConversation
-      })
-      this.$store.dispatch('news/SET_LAST_NEWS', {
-        type: 'edit',
-        res: {
-          roomid: news.roomid,
-          news: news
-        }
-      })
-      saveRecentConversationToLocal(news.senderId)
-    },
-    receiveValidateMessage(news) {
-      this.$refs['audio'].play()
-      console.log('收到新的验证消息', news)
-      this.$store.dispatch('news/SET_UNREAD_NEWS', {
-        roomid: news.roomid,
-        count: 1,
-        type: SET_UNREAD_NEWS_TYPE_MAP.add
-      })
-    },
-    receiveAgreeFriendValidate(data) {
-      console.log('receiveAgreeFriendValidate', data)
-    },
-    conversationList(list) {
-      // console.log("当前会话列表", list)
-    },
-    
-     //发送的消息被对方读取了
-     
-    isReadMsg(val) {
-      console.log('isReadMsg', val)
-      const { roomid, status } = val
-      this.$store.dispatch('news/SET_USER_IS_READ_MSG', {
-        roomid,
-        status
-      })
-    }
-  },
-  */
   methods: {
-    userGoOnline() {
-      this.$socket.emit('goOnline', this.userInfo)
-    },
     /**
      * 获取系统用户（比如发送验证消息的系统用户）,然后加入会话列表
      */
@@ -261,7 +172,7 @@ export default {
         sysUserList.forEach(item => {
           this.$store.dispatch('app/SET_SYS_USERS', sysUserList)
           const val = {
-            roomid: item._id + '-' + this.userInfo._id
+            roomId: item._id + '-' + this.userInfo._id
           }
           this.$socket.emit('join', val)
         })
@@ -277,6 +188,69 @@ export default {
       this.asideTranslateX === 0
         ? (this.asideTranslateX = -70)
         : (this.asideTranslateX = 0)
+    },
+    onlineUser(data) {
+      console.log('当前在线用户列表', data)
+      const onlineUserIdArr = Object.values(data).map(item => item._id)
+      this.$store.dispatch('app/SET_ONLINE_USER', onlineUserIdArr)
+    },
+    receiveMessage(news) {
+
+      this.$refs['audio'].play()
+      console.log('收到新消息', news)
+      const message = news.message ? news.message.slice(0, 10) : ''
+      this.$notify({
+        title: '收到新消息',
+        message,
+        type: 'success'
+      })
+      /*
+      this.$store.dispatch('news/SET_UNREAD_NEWS', {
+        roomId: news.roomId,
+        count: 1,
+        type: 'ADD'
+      })
+      const senderConversation = this.allConversation.find(item => item.roomId === news.roomId)
+      this.$store.dispatch('app/SET_RECENT_CONVERSATION', {
+        type: 'add',
+        data: senderConversation
+      })
+      
+      this.$store.dispatch('news/SET_LAST_NEWS', {
+        type: 'edit',
+        res: {
+          roomId: news.roomId,
+          news: news
+        }
+      })
+      */
+      saveRecentConversationToLocal(news.senderId)
+    },
+    receiveValidateMessage(news) {
+      this.$refs['audio'].play()
+      console.log('收到新的验证消息', news)
+      this.$store.dispatch('news/SET_UNREAD_NEWS', {
+        roomId: news.roomId,
+        count: 1,
+        type: SET_UNREAD_NEWS_TYPE_MAP.add
+      })
+    },
+    receiveAgreeFriendValidate(data) {
+      console.log('receiveAgreeFriendValidate', data)
+    },
+    conversationList(list) {
+      // console.log("当前会话列表", list)
+    },
+    
+     //发送的消息被对方读取了
+     
+    isReadMsg(val) {
+      console.log('isReadMsg', val)
+      const { roomId, status } = val
+      this.$store.dispatch('news/SET_USER_IS_READ_MSG', {
+        roomId,
+        status
+      })
     }
   },
   mounted() {
@@ -287,6 +261,11 @@ export default {
       })
     }
     this.sysUserJoinSocket()
+  },
+  created() {
+    this.$eventBus.$on('receiveMessage', (data) => {
+      this.receiveMessage(data)
+    })
   }
 }
 </script>

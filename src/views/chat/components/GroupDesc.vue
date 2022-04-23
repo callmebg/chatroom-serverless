@@ -1,10 +1,5 @@
 <template>
   <div class="group-desc-com">
-    <div class="notice">
-      <span>
-        富强、民主、文明、和谐、自由、平等、公正、法治，倡导爱国、敬业、诚信、友善
-      </span>
-    </div>
     <div class="member">
       <group-user-list :userlist="groupMembers" />
     </div>
@@ -24,7 +19,7 @@ export default {
   methods: {
     async fetchGroupInfo() {
       if (this.currentConversation.conversationType === 'GROUP') {
-        const id = this.currentConversation.groupId._id
+        const id = this.currentConversation.group_Id
         const { data } = await this.$http.getGroupInfo({id})
         const { data: groupInfo, status } = data
         if (status === 2000) {
@@ -47,12 +42,5 @@ export default {
   height: 100%;
   width: 100%;
   border-left: 1px solid #cccccc;
-  .notice {
-    height: 50%;
-    border-bottom: 1px solid #cccccc;
-  }
-  .member {
-    height: 50%;
-  }
 }
 </style>
