@@ -25,8 +25,7 @@ export default {
   },
   methods: {
     async fetchMyValidateNews() {
-      const { _id: id } = this.userInfo
-      const { data } = await this.$http.getMyValidateNews({id})
+      const { data } = await this.$http.getMyValidateNews()
       const { data: validateNewsList, status } = data
       console.log(data)
       if (status === 2000) {

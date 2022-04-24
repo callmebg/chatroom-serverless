@@ -191,11 +191,10 @@ export default {
     },
     onlineUser(data) {
       console.log('当前在线用户列表', data)
-      const onlineUserIdArr = Object.values(data).map(item => item._id)
+      const onlineUserIdArr = Object.values(data).map(item => item.user_id)
       this.$store.dispatch('app/SET_ONLINE_USER', onlineUserIdArr)
     },
     receiveMessage(news) {
-
       this.$refs['audio'].play()
       console.log('收到新消息', news)
       const message = news.message ? news.message.slice(0, 10) : ''
@@ -204,7 +203,6 @@ export default {
         message,
         type: 'success'
       })
-      /*
       this.$store.dispatch('news/SET_UNREAD_NEWS', {
         roomId: news.roomId,
         count: 1,
@@ -223,7 +221,6 @@ export default {
           news: news
         }
       })
-      */
       saveRecentConversationToLocal(news.senderId)
     },
     receiveValidateMessage(news) {
@@ -265,6 +262,9 @@ export default {
   created() {
     this.$eventBus.$on('receiveMessage', (data) => {
       this.receiveMessage(data)
+    })
+    this.$eventBus.$on('onlineUser', (data) => {
+      this.onlineUser(data)
     })
   }
 }

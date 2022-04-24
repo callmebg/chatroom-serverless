@@ -51,25 +51,31 @@ export default class SocketService {
     }
     // 得到服务端发送过来的数据
     this.ws.onmessage = msg => {
-      console.log('从服务端获取到了数据' + msg.data)
+      console.log('从服务端获取到了数据' + msg)
       var data = JSON.parse(msg.data)
-      switch(data["user"])
+      switch(data["type"])
       {
-        case "system":
+        case "systemInfo":
           this.vue.$notify({
             title: '收到系统消息',
-            message: data["message"],
+            message: data["data"],
             type: 'info'
           })
           break
-        case "friend":
-          this.vue.$eventBus.$emit("receiveMessage", data["message"])
+        case "sendNewMessage":
+          this.vue.$eventBus.$emit("receiveMessage", data["data"])
           break
+        case "onlineUser":
+          this.vue.$eventBus.$emit("onlineUser", data["data"])
+          break  
       }
     }
     this.ws.onerror = evt => {
       console.log('连接失败' + evt)
     }
+  }
+  close() {
+    this.ws.close()
   }
 
   // 发送数据的方法

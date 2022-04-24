@@ -36,7 +36,8 @@ export default {
   methods: {
     logout() {
       this.$router.replace('/login')
-      this.$socket.emit('leave')
+      this.$socket.close()
+      //this.$socket.emit('leave')
       this.$store.dispatch('user/LOGOUT')
       removeCookie()
     },
