@@ -12,7 +12,7 @@ export default {
   data() {
     return {
       group: [], /**搜索出来的群聊（已加入的） */
-      friendly: [], /**搜索出来的好友 */
+      friend: [], /**搜索出来的好友 */
     }
   },
   methods: {

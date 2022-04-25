@@ -12,7 +12,6 @@ export default {
   data() {
     return {
       validateNewsList: []
-      // validateNewsList: [{"_id":"5e37d26d01cc1f45685a7acf","roomId":"5e366c6f6b00323a2446512b-5d9d929f49db3825a8e76a04","senderId":"5e2eac0300a77529b8580ddd","senderName":"123456","senderNickname":"良牙03","senderAvatar":"/img/picture.png","reveiverId":"5d9d929f49db3825a8e76a04","time":"2020-02-03 15:57:33","additionMessage":"123123123123","status":1,"validateType":0,"__v":0},{"_id":"5e3fa8b2721ba61d34dbda0e","roomId":"5e366c6f6b00323a2446512b-5d9d929f49db3825a8e76a04","senderId":"5dbec4dbf4972d5754d35d66","senderName":"test","senderNickname":"达也97","senderAvatar":"/img/picture.png","reveiverId":"5d9d929f49db3825a8e76a04","time":"2020-02-09 14:37:38","additionMessage":"你好","status":1,"validateType":0,"__v":0},{"_id":"5e3fb0f3721ba61d34dbda0f","roomId":"5e366c6f6b00323a2446512b-5d9d929f49db3825a8e76a04","senderId":"5dbec4dbf4972d5754d35d66","senderName":"test","senderNickname":"达也97","senderAvatar":"/img/picture.png","reveiverId":"5d9d929f49db3825a8e76a04","time":"2020-02-09 15:12:51","additionMessage":"123","status":1,"validateType":0,"__v":0},{"_id":"5e3fb779721ba61d34dbda11","roomId":"5e366c6f6b00323a2446512b-5d9d929f49db3825a8e76a04","senderId":"5dc8277865b0e64374cccf12","senderName":"chen2","senderNickname":"童虎1c","senderAvatar":"/img/picture.png","reveiverId":"5d9d929f49db3825a8e76a04","time":"2020-02-09 15:40:41","additionMessage":"你好","status":1,"validateType":0,"__v":0},{"_id":"5e3fb781721ba61d34dbda12","roomId":"5e366c6f6b00323a2446512b-5d9d929f49db3825a8e76a04","senderId":"5dc8277865b0e64374cccf12","senderName":"chen2","senderNickname":"童虎1c","senderAvatar":"/img/picture.png","reveiverId":"5d9d929f49db3825a8e76a04","time":"2020-02-09 15:40:49","additionMessage":"你好2","status":1,"validateType":0,"__v":0}]
     }
   },
   computed: {
@@ -26,10 +25,27 @@ export default {
   methods: {
     async fetchMyValidateNews() {
       const { data } = await this.$http.getMyValidateNews()
-      const { data: validateNewsList, status } = data
-      console.log(data)
-      if (status === 2000) {
-        this.validateNewsList = validateNewsList
+      if(data.success) {
+        var ans = []
+        for(var index in data.data) {
+          console.log("index", index)
+          ans.push({
+            "_id": data.data[index]["decision_id"],
+            "senderId": data.data[index]["decision_from"],
+            "recipientId": data.data[index]["decision_to"],
+            "senderAccount": data.data[index]["user_account"],
+            "recipientAccount": data.data[index]["tb_to.user_account"],
+            "additionMessage": data.data[index]["decision_message"],
+            "validateType": data.data[index]["decision_type"],
+            "status": data.data[index]["decision_status"],
+            "time": data.data[index]["decision_create_time"],
+            "senderNickname": data.data[index]["user_nickname"],
+            "senderAvatar": data.data[index]["user_profile"],
+            "recipientNickname": data.data[index]["tb_to.user_nickname"],
+            "recipientAvatar": data.data[index]["tb_to.user_profile"],
+          })
+        }
+        this.validateNewsList = ans
       }
     },
     changeValidateNewsStatus(item, status) {

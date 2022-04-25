@@ -70,16 +70,6 @@ export default {
       this.seleceItem = item
     },
     sendApply() {
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-        this.showAdditionMessage = false
-        this.additionMessage = ''
-        this.$alert('验证消息发送成功！', '提示', {
-          confirmButtonText: '确定',
-          type: 'warning'
-        })
-      }, 500)
       const validateSysUsr = this.sysUsers.filter(item => item.code === '111111')[0]
       const val = {
         roomId: validateSysUsr._id + '-' + this.seleceItem.holderUserId._id,

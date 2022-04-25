@@ -36,20 +36,25 @@
       <div class="validatenews-item" v-for="item in outcomteList" :key="item.time">
         <div class="apply-info">
           <span class="title">
-            <el-tooltip class="item" effect="dark" content="点击查看用户主页" placement="top">
-              <span class="nickname">
-                <router-link :to="`/user/${item.senderId}`" class="">
-                  {{item.senderNickname.slice(0,10)}}
-                </router-link>
-              </span>
-            </el-tooltip>
             <!-- {{item.validateType === 0 ? validateNewsTips.applyFriend}} -->
             <span v-if="item.validateType === 0">
-              {{validateNewsTips.applyFriend}}
+              <span v-if="item.recipientId === userInfo.user_id">
+                <span class="nickname">
+                  {{item.senderNickname.slice(0,10)}}
+                </span>
+                {{validateNewsTips.applyFriendTo}}
+              </span>
+              <span v-else>
+                您添加
+                <span class="nickname">
+                  {{item.recipientNickname.slice(0,10)}}
+                </span>为好友的请求
+              </span>
             </span>
             <span v-else-if="item.validateType === 1">
-              {{validateNewsTips.applyGroup}}：{{item.groupId && item.groupId.title}}
+              {{validateNewsTips.applyGroupTo}}：{{item.groupId && item.groupId.title}}
             </span>
+            <el-tag size="mini" type="info">创建时间：</el-tag>
             <span class="time">
               {{item.time}}
             </span>
@@ -62,11 +67,25 @@
             trigger="click">
             <div class="validate-popover-body" v-loading="isAdding">
               <div class="sender-info">
-                <el-avatar :size="60" :src="IMG_URL + item.senderAvatar" @error="()=>true">
-                  <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"/>
-                </el-avatar>
+                <span v-if="item.recipientId === userInfo.user_id">
+                  <el-avatar :size="60" :src="IMG_URL + item.senderAvatar" @error="()=>true">
+                    <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"/>
+                  </el-avatar>
+                </span>
+                <span v-else>
+                  <el-avatar :size="60" :src="IMG_URL + item.recipientAvatar" @error="()=>true">
+                    <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png"/>
+                  </el-avatar>
+                </span>
                 <div class="info">
-                  <span class="nickname">{{item.senderNickname}}</span>
+                  <span v-if="item.recipientId === userInfo.user_id">
+                    <span class="nickname">{{item.senderNickname}}</span>
+                    <span>{{item.senderAccount}}</span>
+                  </span>
+                  <span v-else>
+                    <span class="nickname">{{item.recipientNickname}}</span>
+                    <span>{{item.recipientAccount}}</span>
+                  </span>
                 </div>
               </div>
               <div class="addition">
@@ -76,16 +95,29 @@
                 </div>
               </div>
               <!-- <div class="operation"> -->
-              <div class="operation" v-if="item.status === 0">
-                <el-button type="success" plain size="small" @click="agreeValidate(item)">同意</el-button>
-                <el-button type="danger" plain size="small">拒绝</el-button>
-              </div>
-              <div class="operation" v-else-if="item.status === 1">
-                <el-tag type="success">已同意</el-tag>
-              </div>
-              <div class="operation" v-else-if="item.status === 2">
-                <el-tag type="danger">已拒绝</el-tag>
-              </div>
+              <span v-if="item.recipientId === userInfo.user_id">
+                <div class="operation" v-if="item.status === 0">
+                  <el-button type="success" plain size="small" @click="agreeValidate(item)">同意</el-button>
+                  <el-button type="danger" plain size="small" @click="disagreeValidate(item)">拒绝</el-button>
+                </div>
+                <div class="operation" v-else-if="item.status === 1">
+                  <el-tag type="success">已同意</el-tag>
+                </div>
+                <div class="operation" v-else-if="item.status === 2">
+                  <el-tag type="danger">已拒绝</el-tag>
+                </div>
+              </span>
+              <span v-else>
+                <div class="operation" v-if="item.status === 0">
+                  <el-tag type="success">待处理</el-tag>
+                </div>
+                <div class="operation" v-else-if="item.status === 1">
+                  <el-tag type="success">已同意</el-tag>
+                </div>
+                <div class="operation" v-else-if="item.status === 2">
+                  <el-tag type="danger">已拒绝</el-tag>
+                </div>
+              </span>
             </div>
             <el-button slot="reference" type="success">查看</el-button>
           </el-popover>
@@ -131,29 +163,27 @@ export default {
   },
   methods: {
     agreeValidate(item) {
+      this.isAdding = true
       if (item.validateType === 0) {
-        this.$socket.emit('sendAgreeFriendValidate', item)
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:0, decision_status: 1})
       } else if (item.validateType === 1) {
-        this.$socket.emit('sendAgreeGroupValidate', item)        
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 1})        
       }
       this.$store.dispatch('app/SET_AGREE_FRIEND_VALIDATE', true)
-      this.isAdding = true
-      setTimeout(() => {
-        this.isAdding = false
-        this.$emit('changeValidateNewsStatus', item, 1)
-        this.$alert('添加成功', '提示！', {
-          confirmButtonText: '确定'
-        });
-      }, 500)
+      this.isAdding = false
+      this.$eventBus.$emit('addNewFriend')
+    },
+    disagreeValidate(item) {
+      this.isAdding = false
+      if (item.validateType === 0) {
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:0, decision_status: 2})
+      } else if (item.validateType === 1) {
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 2})        
+      }
+      this.$store.dispatch('app/SET_AGREE_FRIEND_VALIDATE', false)
+      this.isAdding = false
     }
-  },
-  mounted() {
-    this.$store.dispatch('news/SET_UNREAD_NEWS', {
-      roomId: this.systemValidateUsers._id + '-' + this.userInfo._id,
-      count: 0,
-      type: SET_UNREAD_NEWS_TYPE_MAP.clear
-    })
-  },
+  }
 }
 </script>
 
@@ -169,6 +199,7 @@ export default {
       .nickname {
         font-size: 20px;
         color: #3578E5;
+        display:block;
       }
     }
   }
@@ -215,7 +246,7 @@ export default {
         .title {
           line-height: 20px;
           .nickname {
-            display: inline-block;
+            font-weight:bold
           }
         }
       }

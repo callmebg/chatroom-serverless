@@ -51,7 +51,7 @@ export default class SocketService {
     }
     // 得到服务端发送过来的数据
     this.ws.onmessage = msg => {
-      console.log('从服务端获取到了数据' + msg)
+      console.log('从服务端获取到了数据' + msg.data)
       var data = JSON.parse(msg.data)
       switch(data["type"])
       {
@@ -67,6 +67,9 @@ export default class SocketService {
           break
         case "onlineUser":
           this.vue.$eventBus.$emit("onlineUser", data["data"])
+          break
+        case "addNewFriend":
+          this.vue.$eventBus.$emit("addNewFriend")
           break  
       }
     }
@@ -81,7 +84,10 @@ export default class SocketService {
   // 发送数据的方法
   send(data) {
     console.log("websocket 状态：", this.ws.readyState)
-    data = JSON.stringify(data)
+    if(typeof data != 'string') {
+      // 重发时，已经是字符串了就不用再序列化
+      data = JSON.stringify(data)
+    }
     // 判断此时此刻有没有连接成功
     if (this.ws.readyState === this.ws.OPEN) {
       this.sendRetryCount = 0

@@ -79,16 +79,6 @@ export default {
       if(this.userInfo.user_id == this.seleceItem.user_id) {
         return this.$message({type: 'warning', message: '不能添加自己为好友！'})
       }
-      this.loading = true
-      setTimeout(() => {
-        this.loading = false
-        this.showAdditionMessage = false
-        this.additionMessage = ''
-        this.$alert('验证消息发送成功！', '提示', {
-          confirmButtonText: '确定',
-          type: 'warning',
-        })
-      }, 500)
       const val = {
         friend_from: this.userInfo.user_id,
         friend_to: this.seleceItem.user_id,

@@ -15,8 +15,8 @@ export const searchObjectMap = [
 
 
 export const validateNewsTips = {
-  applyFriend: '请求添加你为好友',
-  applyGroup: '请求加入群聊'
+  applyFriendTo: '请求添加您为好友',
+  applyGroupTo: '请求加入群聊'
 }
 
 export const qiniu_URL = 'http://blog.static.chenr.cn/'

@@ -1,4 +1,4 @@
-import friendly from './modules/friend'
+import friend from './modules/friend'
 import group from './modules/group'
 import news from './modules/news'
 import sys from './modules/sys'
@@ -9,7 +9,7 @@ export const API = 'api'
 
 export default {
   ...user,
-  ...friendly,
+  ...friend,
   ...group,
   ...news,
   ...sys,

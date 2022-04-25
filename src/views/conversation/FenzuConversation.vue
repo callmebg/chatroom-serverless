@@ -240,6 +240,9 @@ export default {
     fenzuMenu
   },
   created() {
+    this.$eventBus.$on('addNewFriend', () => {
+      this.getMyFriends()
+    })
     this.getMyFriends()
     this.$nextTick(() =>{
       const collapseItems = [...document.getElementsByClassName('collapse-item')]
