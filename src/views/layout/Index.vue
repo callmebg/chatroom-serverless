@@ -189,7 +189,7 @@ export default {
         ? (this.asideTranslateX = -70)
         : (this.asideTranslateX = 0)
     },
-    onlineUser(data) {
+    allOnlineUser(data) {
       console.log('当前在线用户列表', data)
       const onlineUserIdArr = Object.values(data).map(item => item.user_id)
       this.$store.dispatch('app/SET_ONLINE_USER', onlineUserIdArr)
@@ -208,12 +208,14 @@ export default {
         count: 1,
         type: 'ADD'
       })
-      const senderConversation = this.allConversation.find(item => item.roomId === news.roomId)
+      const senderConversation = this.allConversation.find(
+        item => item.roomId === news.roomId
+      )
       this.$store.dispatch('app/SET_RECENT_CONVERSATION', {
         type: 'add',
         data: senderConversation
       })
-      
+
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
@@ -238,9 +240,9 @@ export default {
     conversationList(list) {
       // console.log("当前会话列表", list)
     },
-    
-     //发送的消息被对方读取了
-     
+
+    //发送的消息被对方读取了
+
     isReadMsg(val) {
       console.log('isReadMsg', val)
       const { roomId, status } = val
@@ -251,7 +253,10 @@ export default {
     }
   },
   mounted() {
-    this.$socket.emit("connect", {userId: this.$store.state.user.userInfo.user_id, userName:this.$store.state.user.userInfo.user_nickname})
+    this.$socket.emit('connect', {
+      userId: this.$store.state.user.userInfo.user_id,
+      userName: this.$store.state.user.userInfo.user_nickname
+    })
     if (this.device === 'Mobile') {
       document.addEventListener('click', () => {
         this.asideTranslateX = -70
@@ -260,11 +265,11 @@ export default {
     this.sysUserJoinSocket()
   },
   created() {
-    this.$eventBus.$on('receiveMessage', (data) => {
+    this.$eventBus.$on('receiveMessage', data => {
       this.receiveMessage(data)
     })
-    this.$eventBus.$on('onlineUser', (data) => {
-      this.onlineUser(data)
+    this.$eventBus.$on('allOnlineUser', data => {
+      this.allOnlineUser(data)
     })
   }
 }

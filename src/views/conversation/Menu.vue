@@ -38,21 +38,37 @@
       :visible.sync="dialogVisible"
       width="30%"
     >
-      <div
-        class="setting-page"
-        :style="device === 'Mobile' ? { width: '95%' } : {}"
-      >
-        <div class="header">
-          <el-avatar
-            :size="large"
-            :src="IMG_URL + this.friendInfo.user_profile"
-          ></el-avatar>
-          <div class="info-list">
-            <div class="info-item">Id：{{ userInfo.user_id }}</div>
-            <div class="info-item">账号：{{ userInfo.user_account }}</div>
-            <div class="info-item">
-              注册时间：{{ userInfo.user_create_time | formatDate }}
+      <div class="header">
+        <el-row :gutter="10">
+          <el-col :span="6">
+            <el-avatar
+              :size="120"
+              :src="IMG_URL + this.friendInfo.user_profile"
+            ></el-avatar
+          ></el-col>
+          <el-col :span="16">
+            <div class="info-list">
+              <div class="info-item">Id：{{ friendInfo.user_id }}</div>
+              <div class="info-item">账号：{{ friendInfo.user_account }}</div>
+              <div class="info-item">昵称：{{ friendInfo.user_nickname }}</div>
+              <div class="info-item">
+                性别：{{
+                  friendInfo.user_sex == 2
+                    ? '保密'
+                    : friendInfo.user_sex == 0
+                    ? '女'
+                    : '男'
+                }}
+              </div>
             </div>
+          </el-col>
+        </el-row>
+        <div class="info-list">
+          <div class="info-item">生日：{{ friendInfo.user_birthday }}</div>
+          <div class="info-item">签名：{{ friendInfo.user_signature }}</div>
+          <div class="info-item">邮箱：{{ friendInfo.user_mail }}</div>
+          <div class="info-item">
+            注册时间：{{ friendInfo.user_create_time }}
           </div>
         </div>
       </div>
@@ -89,7 +105,6 @@ export default {
           that.dialogVisible = true
         }
       })
-      // this.$eventBus.$emit('showUserProfile'
     },
     switchFenzu() {
       this.$eventBus.$emit('toggleFenzuModal', {
@@ -141,6 +156,13 @@ export default {
   > .menu-item {
     &:first-child {
       margin-top: 0;
+    }
+  }
+  .header {
+    .info-list {
+      margin-top: 10px;
+      font-size: medium;
+      font-weight: bold;
     }
   }
 }

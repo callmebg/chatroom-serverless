@@ -1,6 +1,5 @@
 <template>
   <div class="pop-ups">
-    <user-profile v-if="isShowUserProfile" />
     <fenzu-modal
       v-if="isShowFenzuModal"
       :current-conversation="currentConversation"
@@ -33,7 +32,6 @@
 
 <script>
 import './../static/css/animation.scss'
-import userProfile from '@/components/userProfile'
 import fenzuModal from '@/components/fenzuModal'
 import beizhuModal from '@/components/beizhuModal'
 import createGroup from '@/components/createGroup'
@@ -43,7 +41,6 @@ export default {
   data() {
     return {
       showModal: false,
-      isShowUserProfile: false,
       isShowFenzuModal: false,
       isShowBeizhuModal: false,
       isShowCreateGroup: false,
@@ -65,9 +62,6 @@ export default {
     }
   },
   created() {
-    this.$eventBus.$on('showUserProfile', () => {
-      this.isShowUserProfile = true
-    })
     this.$eventBus.$on('toggleFenzuModal', (e) => {
       const { show, data } = e
       this.isShowFenzuModal = show
@@ -92,7 +86,6 @@ export default {
     })
   },
   components: {
-    userProfile,
     fenzuModal,
     beizhuModal,
     createGroup,

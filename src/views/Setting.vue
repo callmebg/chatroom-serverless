@@ -299,6 +299,9 @@ export default {
       console.log('file')
       var picture = fileList[0].raw
       console.log(picture)
+      if(!this.beforeAvatarUpload(fileList[0])) {
+        return
+      }
       var key =
         '/profile/' +
         this.$store.state.user.userInfo.user_account +

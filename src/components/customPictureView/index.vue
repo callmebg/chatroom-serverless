@@ -25,7 +25,6 @@
   </div>
 </template>
 
-// http://blog.static.chenr.cn/cc-messger-170240566a4-56.jpeg
 <script>
 export default {
   props: {

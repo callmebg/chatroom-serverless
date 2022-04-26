@@ -65,14 +65,7 @@ export const defaultPyqItem = {
   __v: 0,
 }
 
-export const WEB_RTC_MSG_TYPE = {
-  artBoard: 'artBoard',
-  video: 'video',
-  audio: 'audio'
-}
-
 export const MSG_TYPES = {
-  ...WEB_RTC_MSG_TYPE,
   sys: 'sys',
   text: 'text',
   img: 'img',

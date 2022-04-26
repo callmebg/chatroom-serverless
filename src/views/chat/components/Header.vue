@@ -22,7 +22,6 @@
 <script>
 import './../../../../static/iconfont/iconfont.css'
 import settingPanel from './settingPanel'
-import { WEB_RTC_MSG_TYPE } from '@/const'
 import { mapState } from 'vuex'
 export default {
   props: {

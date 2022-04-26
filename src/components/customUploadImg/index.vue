@@ -1,23 +1,11 @@
 <template>
   <div class="custom-upload-img-com">
+
     <div class="upload-img-com-wrapper" v-show="useType !== 'slot'">
-      <el-alert title="只能上传小于 1M 的图片" type="warning" effect="dark" :closable="false" />
+      <el-alert title="只能发送小于 2M 的图片" type="warning" effect="dark" :closable="false" />
       <div class="option">
-        <!-- <input type="file" @change="uploadServer" name="" id=""> -->
-        <label for="up-to-server">
-          <i class="option-item ok el-icon-picture">上传服务器
-            <input
-              id="up-to-server"
-              class="img-inp upload"
-              type="file"
-              title="选择图片"
-              accept="image/png, image/jpeg, image/gif, image/jpg"
-              @change="uploadServer"
-            >
-          </i>
-        </label>
         <label for="up-to-qiniu">
-          <i class="option-item ok el-icon-picture">上传七牛云
+          <i class="option-item ok el-icon-picture">点击上传图片
             <input
               id="up-to-qiniu"
               class="img-inp upload"
@@ -63,8 +51,8 @@ export default {
       // return
       const fileType = file.type && file.type.split("/")[1]
       const fileSize = file.size / 1024 / 1024
-      if (fileSize > 1) {
-        this.$message.error('只能上传小于1M的图片！换一个小图片试试吧~~')
+      if (fileSize > 2) {
+        this.$message.error('只能上传小于2M的图片！换一个小图片试试吧~~')
         return
       }
       const putExtra = {
@@ -93,28 +81,6 @@ export default {
       const imgName = imgRandomName() + '.' + fileType
       const observable = window.qiniu.upload(file, imgName, this.token, putExtra, config)
       const subScription = observable.subscribe(subObject)
-    },
-    /**上传至本地服务器 */
-    uploadServer(e) {
-      if (isProduction()) {
-        return this.$message.error('为减少服务器压力线上请上传至七牛云哟~');
-      }
-      const guid = genGuid()
-      const file = e.target.files[0]
-      typeof this.getLocalUrl === 'function' && this.createObjetURL(file, guid)
-      const fileType = file.type && file.type.split("/")[1]
-      const fileSize = file.size / 1024 / 1024
-      const formdata = new FormData()
-      formdata.append('file', file)
-      this.$http.uploadFile(formdata).then(res => {
-        console.log('上传文件结果', res)
-        const { data } = res
-        if (data.status === 2000) {
-          this.getStatus({status: uploadImgStatusMap.complete, data: {key: data.data}, guid})
-        } else {
-
-        }
-      })
     }
   },
 }

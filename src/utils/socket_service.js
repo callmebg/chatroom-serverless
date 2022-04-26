@@ -65,8 +65,16 @@ export default class SocketService {
         case "sendNewMessage":
           this.vue.$eventBus.$emit("receiveMessage", data["data"])
           break
-        case "onlineUser":
-          this.vue.$eventBus.$emit("onlineUser", data["data"])
+        case "allOnlineUser":
+          this.vue.$eventBus.$emit("allOnlineUser", data["data"])
+          break
+        case "changeOnlineUser":
+          this.vue.$notify({
+            title: '收到系统消息',
+            message: data["data"],
+            type: 'info'
+          })
+          this.emit("getActiveUser")
           break
         case "addNewFriend":
           this.vue.$eventBus.$emit("addNewFriend")
