@@ -37,16 +37,16 @@ export default {
     userInfo() {
       return this.$store.state.user.userInfo
     },
-    beizhu() { // 备注map
-      return this.userInfo.friendBeizhu || {}
+    remark() { // 备注map
+      return this.userInfo.friendRemark || {}
     },
     haderTitle() {
       const currentConversation = this.currentConversation
       let res = ''
       if (currentConversation.isGroup) {
-        res = currentConversation.group_name + `（${currentConversation.userNum}）`
+        res = currentConversation.group_name
       } else {
-        res = this.beizhu[currentConversation._id] ? this.beizhu[currentConversation._id] + `（${currentConversation.nickname}）` : currentConversation.nickname
+        res = currentConversation.friend_remark ? currentConversation.friend_remark : currentConversation.user_nickname
       }
       return res
     },

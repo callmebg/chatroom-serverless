@@ -1,8 +1,7 @@
 import request from '@/utils/request'
 
-
 export default {
-  getMyFriends(id) {
+  getMyFriends() {
     return request.get(`friend/getFriends`)
   },
   getRecentConversationList(data) {
@@ -10,5 +9,9 @@ export default {
   },
   deleteFriend(data) {
     return request.post(`friend/deleteFriend`, data)
+  },
+  /**修改好友所在的分组 */
+  modifyFenzu(data) {
+    return request.post(`friend/modifyFenzu`, data)
   }
 }

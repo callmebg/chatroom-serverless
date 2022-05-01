@@ -31,13 +31,9 @@ export default {
   addNewFenzu(data) {
     return request.post(`user/addfenzu`, data)
   },
-  /**修改好友所在的分组 */
-  modifyuserfenzu(data) {
-    return request.post(`user/modifyuserfenzu`, data)
-  },
   /**修改好友的备注 */
-  modifyFriendBeizhu(data) {
-    return request.post(`user/modifyfriendbeizhu`, data)
+  modifyFriendRemark(data) {
+    return request.post(`user/modifyFriendRemark`, data)
   },
   /**删除分组 */
   deleteFenzu(data) {

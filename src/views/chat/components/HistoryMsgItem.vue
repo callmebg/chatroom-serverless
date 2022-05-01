@@ -23,17 +23,17 @@ export default {
     userInfo() {
       return this.$store.state.user.userInfo
     },
-    friendBeizhu() { // 好友备注Map {id2: '备注1', id1: '备注2'}
-      return this.userInfo.friendBeizhu || {}
+    friendRemark() { // 好友备注Map {id2: '备注1', id1: '备注2'}
+      return this.userInfo.friendRemark || {}
     },
     name() {
       const msg = this.msgItem
-      const friendBeizhu = this.friendBeizhu
+      const friendRemark = this.friendRemark
       let res = ''
       if (msg.senderId === this.userInfo._id) {
         res = '我'
       } else {
-        res = friendBeizhu[msg.senderId] ? friendBeizhu[msg.senderId] : msg.senderNickname
+        res = friendRemark[msg.senderId] ? friendRemark[msg.senderId] : msg.senderNickname
       }
       return res
     }

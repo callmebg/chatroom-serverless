@@ -34,9 +34,9 @@ export default {
       // 用户信息
       return this.$store.state.user.userInfo
     },
-    friendBeizhu() {
+    friendRemark() {
       // 好友备注Map {id2: '备注1', id1: '备注2'}
-      return this.userInfo.friendBeizhu || {}
+      return this.userInfo.friendRemark || {}
     },
     recentConversation() {
       return this.$store.state.app.recentConversation
@@ -48,8 +48,8 @@ export default {
         conversationList.length &&
         conversationList
           .map(item => {
-            item.beizhu = this.friendBeizhu[item._id]
-              ? this.friendBeizhu[item._id]
+            item.remark = this.friendRemark[item._id]
+              ? this.friendRemark[item._id]
               : ''
             item.lastNews = this.lastNewsMap[item.roomId]
               ? this.lastNewsMap[item.roomId]

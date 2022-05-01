@@ -52,7 +52,10 @@
               </span>
             </span>
             <span v-else-if="item.validateType === 1">
-              {{validateNewsTips.applyGroupTo}}：{{item.groupId && item.groupId.title}}
+              <span class="nickname">
+                  {{item.senderNickname.slice(0,10)}}
+                </span>
+              {{validateNewsTips.applyGroupTo}}：{{item.groupId}}
             </span>
             <el-tag size="mini" type="info">创建时间：</el-tag>
             <span class="time">
@@ -163,15 +166,16 @@ export default {
   },
   methods: {
     agreeValidate(item) {
+      console.log("item",item)
       this.isAdding = true
       if (item.validateType === 0) {
         this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:0, decision_status: 1})
+        this.$eventBus.$emit('changeFriend')
       } else if (item.validateType === 1) {
-        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 1})        
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 1, decision_group: item.groupId})        
       }
-      this.$store.dispatch('app/SET_AGREE_FRIEND_VALIDATE', true)
       this.isAdding = false
-      this.$eventBus.$emit('addNewFriend')
+      this.$eventBus.$emit('changeSystemNews')
     },
     disagreeValidate(item) {
       this.isAdding = false
@@ -180,7 +184,6 @@ export default {
       } else if (item.validateType === 1) {
         this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 2})        
       }
-      this.$store.dispatch('app/SET_AGREE_FRIEND_VALIDATE', false)
       this.isAdding = false
     }
   }

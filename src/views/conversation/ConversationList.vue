@@ -17,10 +17,6 @@
       </el-tab-pane>
       <el-tab-pane label="好友">
         <span slot="label"><i class="el-icon-user"></i></span>
-        <div class="friend-tab-header space-bw">
-          <el-input size="mini" v-model="newFenzuName" placeholder="请输入分组名" style="marginRight: 5px" />
-          <el-button size="mini" type="success" @click="addNewFenzu" :loading="isAdding">添加</el-button>
-        </div>
         <fenzu-conversation-list
           :current-conversation="currentConversation"
           :set-current-conversation="setCurrentConversation"
@@ -72,7 +68,6 @@ export default {
        */
       conversationList: [],
       searchKeyWord: '',
-      newFenzuName: '', // 新添加的分组名称
       activeFriendFenzu: [],
       activeGorupFenzu: [],
       isAdding: false // 是否正在添加分组
@@ -83,60 +78,19 @@ export default {
       return this.$store.state.user.userInfo
     },
     friendFenzu() { // 获取所有分组 [分组1， 分组2]
-      return Object.keys(this.userInfo.friendFenzu)
+      return Object.keys(this.$store.state.user.fenzu)
     },
     device() {
       return this.$store.state.device.deviceType
     }
   },
   methods: {
-    async addNewFenzu() {
-      if (!this.newFenzuName.trim()) return
-      if (this.friendFenzu.includes(this.newFenzuName.trim())) {
-        this.$message({type: 'warning', message: '已有该分组'})
-      }
-      this.isAdding = true
-      const params = {
-        name: this.newFenzuName.trim(),
-        userId: this.userInfo._id
-      }
-      const { data } = await this.$http.addNewFenzu(params)
-      if (data.status !== 2000) {
-        this.$message({message: data.msg, type: warning})
-      }
-      this.newFenzuName = ''
-      const userInfo = await this.$http.getUserInfo(this.userInfo._id)
-      this.isAdding = false
-      this.$store.dispatch('user/LOGIN', userInfo.data.data)
-    },
     joinChatRoom() { // 发送websocket消息，将会话列表加入房间
       this.conversationList.forEach(item => {
         this.$socket.emit("join", item)
       })
     }
   },
-  // sockets: {
-  //   async receiveAgreeFriendValidate(data) {
-  //     console.log('receiveAgreeFriendValidate conversationlist', data)
-  //     await this.getMyFriends()
-  //     this.getMyGroup()
-  //   },
-  // },
-  // watch: {
-  //   conversationList: {
-  //     handler() {
-  //       this.joinChatRoom()
-  //     }, deep: true, immediate: true
-  //   },
-  //   '$store.state.app.agreeFriendValidate': {
-  //     async handler(newVal, oldVal) {
-  //       if (newVal) {
-  //         await this.getMyFriends()
-  //         this.getMyGroup()
-  //       }
-  //     }, immediate: true, deep: true
-  //   }
-  // },
   components: {
     recentConversationList,
     fenzuConversationList,

@@ -198,16 +198,19 @@ export default {
       this.$refs['audio'].play()
       console.log('收到新消息', news)
       const message = news.message ? news.message.slice(0, 10) : ''
-      this.$notify({
-        title: '收到新消息',
-        message,
-        type: 'success'
-      })
-      this.$store.dispatch('news/SET_UNREAD_NEWS', {
-        roomId: news.roomId,
-        count: 1,
-        type: 'ADD'
-      })
+      // 自己发的信息回显就不用提示辣
+      if(news.senderId != this.userInfo.user_id) {
+        this.$notify({
+          title: '收到新消息',
+          message,
+          type: 'success'
+        })
+        this.$store.dispatch('news/SET_UNREAD_NEWS', {
+          roomId: news.roomId,
+          count: 1,
+          type: 'ADD'
+        })
+      }
       const senderConversation = this.allConversation.find(
         item => item.roomId === news.roomId
       )

@@ -15,19 +15,18 @@
             :label="item"
             v-model="selectFenzu"
           >
-            {{item}}（{{userInfo.friendFenzu[item].length}}）
-            <!-- <span class="oper" @click.stop="test">123</span> -->
+            {{item}}
           </el-radio>
         </el-radio-group>
       </div>
     </div>
     <el-dialog
-      title="添加分组"
+      title="添加新的分组"
       :visible="isShowAddFenzu"
       width="30%"
       @close="closeAddFenzu"
     >
-      <el-input />
+      <el-input v-model="newFenzu" />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="addFenzu">确 定</el-button>
       </span>
@@ -42,7 +41,8 @@ export default {
     return {
       selectFenzu: "",
       confirmLoading: false,
-      isShowAddFenzu: false
+      isShowAddFenzu: false,
+      newFenzu: ""
     }
   },
   computed: {
@@ -50,10 +50,10 @@ export default {
       return this.$store.state.user.userInfo
     },
     fenzuKeys() {
-      return Object.keys(this.userInfo.friendFenzu)
+      return Object.keys(this.$store.state.user.fenzu)
     },
     currentFenzu() {
-      const fenzuIdsMap = this.userInfo.friendFenzu
+      var fenzuIdsMap = this.$store.state.user.fenzu
       let res = ''
       this.fenzuKeys.forEach(item => {
         if ((fenzuIdsMap[item] || []).includes(this.currentConversation._id)) {
@@ -68,16 +68,14 @@ export default {
       if (!this.selectFenzu) return
       this.confirmLoading = true
       const params = {
-        userId: this.userInfo._id,
         friendId: this.currentConversation._id,
         newFenzu: this.selectFenzu
       }
-      const fenzuRes = await this.$http.modifyuserfenzu(params)
-      if (fenzuRes.data.status === 2000) {
-        const userInfo = await this.$http.getUserInfo(this.userInfo._id)
-        this.$store.dispatch('user/LOGIN', userInfo.data.data)
-        this.confirmLoading = false
+      const fenzuRes = await this.$http.modifyFenzu(params)
+      if (fenzuRes.data.success) {
+        this.$eventBus.$emit('changeFriend')
       }
+      this.confirmLoading = false
     },
     close() {
       this.$emit('hidden-fenzu')
@@ -89,10 +87,13 @@ export default {
       this.isShowAddFenzu = false
     },
     addFenzu() {
-      
-    },
-    test() {
-      console.log(123)
+      // 不能添加原有分组
+      if(this.fenzuKeys.includes(this.newFenzu)){
+        return this.$message({ type: 'error', message: '已经有该分组！' })
+      }
+      this.fenzuKeys.push(this.newFenzu)
+      this.$store.commit('user/addFenzu', this.newFenzu)
+      this.closeAddFenzu()
     }
   },
   mounted() {

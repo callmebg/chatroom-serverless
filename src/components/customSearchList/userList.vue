@@ -86,6 +86,7 @@ export default {
         friend_whyme: this.additionMessage
       }
       this.$socket.emit('addFriend', val)
+      this.showAdditionMessage = false
     },
   },
   computed: {

@@ -13,7 +13,7 @@
       <span
         class="oper-item operation-text"
         slot="reference"
-        @click.stop="showBeizhu"
+        @click.stop="showRemark"
         v-if="currentConversation.conversationType === conversationTypes.friend"
         >修改备注</span
       >
@@ -79,7 +79,7 @@ export default {
   data() {
     return {
       conversationTypes,
-      newBeizhu: '',
+      newRemark: '',
       IMG_URL: process.env.IMG_URL,
       dialogVisible: false,
       friendInfo: null
@@ -108,8 +108,8 @@ export default {
         }
       })
     },
-    showBeizhu() {
-      this.$eventBus.$emit('toggleBeizhuModal', {
+    showRemark() {
+      this.$eventBus.$emit('toggleRemarkModal', {
         show: true,
         data: {
           currentConversation: this.currentConversation

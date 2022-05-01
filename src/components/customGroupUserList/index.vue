@@ -17,7 +17,7 @@
         </el-avatar>
         <div class="user-detail">
           <span class="normal-font detail-item ellipsis">
-            {{item.userId.beizhu ? item.userId.beizhu : item.userId.nickname}}
+            {{item.userId.remark ? item.userId.remark : item.userId.nickname}}
           </span>
           <span class="is-holder secondary-font" v-if="item.holder">· 群主</span>
         </div>
@@ -46,14 +46,14 @@ export default {
         return (this.onlineUser || []).includes(item.userId._id)
       })
     },
-    beizhu() { // 备注Map {好友id1: 备注1, 好友id2: 备注2}
-      return this.$store.state.user.userInfo.friendBeizhu || {}
+    remark() { // 备注Map {好友id1: 备注1, 好友id2: 备注2}
+      return this.$store.state.user.userInfo.friendRemark || {}
     },
     outcomeUserList() {
       const userList = JSON.parse(JSON.stringify(this.userlist))
       return userList.map(item => {
         if (item.userId) {
-          item.userId.beizhu = this.beizhu[item.userId._id] ? this.beizhu[item.userId._id] : ''
+          item.userId.remark = this.remark[item.userId._id] ? this.remark[item.userId._id] : ''
         }
         return item
       }).sort((a, b) => {

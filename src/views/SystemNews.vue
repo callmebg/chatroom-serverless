@@ -43,6 +43,7 @@ export default {
             "senderAvatar": data.data[index]["user_profile"],
             "recipientNickname": data.data[index]["tb_to.user_nickname"],
             "recipientAvatar": data.data[index]["tb_to.user_profile"],
+            "groupId": data.data[index]["decision_group"],
           })
         }
         this.validateNewsList = ans
@@ -70,6 +71,9 @@ export default {
   },
   created() {
     // this.$http.getMyValidateNews()
+    this.$eventBus.$on('changeSystemNews', () => {
+      this.fetchMyValidateNews()
+    })
     this.fetchMyValidateNews()
   },
 }

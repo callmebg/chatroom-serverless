@@ -30,22 +30,5 @@ export default {
   },
   getRecentGroupConversation(data) {
     return request.post(`group/recent`, data)
-  },
-  /**
-   * ------------------华丽分界线，以下是和群组消息有关的API------------------------
-   */
-  /**
-   * 
-   * @param {data} Object
-   */
-  getRecentGroupNews(data) {
-    const { roomId, page, pageSize } = data
-    return request.get(`groupnews/recentnews?roomId=${roomId}&page=${page}&pageSize=${pageSize}`)
-  },
-  getGroupHistoryMsg(data) {
-    return request.post(`groupnews/historymsg`, data)
-  },
-  getGroupLastNews(data) {
-    return request.post(`groupnews/lastnews`, data)
   }
 }

@@ -14,7 +14,9 @@
               {{item.group_name}}
             </span>
           </p>
-          <p class="item secondary-font">{{ item.group_description }}</p>
+          <p class="item secondary-font">群号：{{ item.group_id }}</p>
+          <p class="item secondary-font">描述：{{ item.group_description }}</p>
+          <p class="item secondary-font">创建时间：{{ item.group_create_time }}</p>
         </div>
       </div>
       <div class="operation">
@@ -70,19 +72,13 @@ export default {
       this.seleceItem = item
     },
     sendApply() {
-      const validateSysUsr = this.sysUsers.filter(item => item.code === '111111')[0]
       const val = {
-        roomId: validateSysUsr._id + '-' + this.seleceItem.holderUserId._id,
-        senderId: this.userInfo._id,
-        senderName: this.userInfo.name,
+        senderId: this.userInfo.user_id,
         senderNickname: this.userInfo.nickname,
-        senderAvatar: this.userInfo.photo,
-        reveiverId: this.seleceItem.holderUserId._id,
-        groupId: this.seleceItem._id,
-        time: fromatTime(new Date()),
-        additionMessage: this.additionMessage,
-        status: 0,
-        validateType: 1
+        senderAvatar: this.userInfo.profile,
+        reveiverId: this.seleceItem.group_owner,
+        groupId: this.seleceItem.group_id,
+        additionMessage: this.additionMessage
       }
       this.$socket.emit('sendValidateMessage', val)
       console.log(val)

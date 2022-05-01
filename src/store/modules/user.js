@@ -6,10 +6,17 @@ const state = {
   userInfo: JSON.parse(window.localStorage.getItem('userInfo') || '{}'),
   token: '',
   uploadToken: null,
-  cos: null
+  cos: null,
+  fenzu: null
 }
 
 const mutations = {
+  setFenzu(state, data) {
+    state.fenzu = data
+  },
+  addFenzu(state, data) {
+    state.fenzu[data] = []
+  },
   setCos(state, data) {
     state.cos = data
   },

@@ -1,12 +1,12 @@
 <template>
-  <div class="beizhu-modal-cmp all0">
-    <div class="beizhu hor-ver-center" v-loading="confirmLoading">
+  <div class="remark-modal-cmp all0">
+    <div class="remark hor-ver-center" v-loading="confirmLoading">
       <span class="p-r-t el-icon-close" @click="close"></span>
       <div class="header">
         <span class="title">修改备注姓名</span>
       </div>
       <div class="body">
-        <el-input v-model="beizhu" />
+        <el-input v-model="remark" />
       </div>
       <div class="footer">
         <el-button @click="ok" size="mini" type="success">确认</el-button>
@@ -22,7 +22,7 @@ export default {
   data() {
     return {
       confirmLoading: false,
-      beizhu: this.currentConversation.beizhu
+      remark: this.currentConversation.friend_remark
     }
   },
   computed: {
@@ -34,21 +34,23 @@ export default {
     async ok() {
       this.confirmLoading = true
       const params = {
-        userId: this.userInfo._id,
         friendId: this.currentConversation._id,
-        friendBeizhu: this.beizhu
+        friendRemark: this.remark
       }
-      await this.$http.modifyFriendBeizhu(params)
-      const userInfo = await this.$http.getUserInfo(this.userInfo._id)
-      this.$store.dispatch('user/LOGIN', userInfo.data.data)
-      this.$eventBus.$emit('toggleBeizhuModal', {
+      await this.$http.modifyFriendRemark(params)
+      this.currentConversation.friend_remark = this.remark
+      this.$eventBus.$emit('toggleRemarkModal', {
         show: false,
         data: {}
+      })
+      this.$store.commit('app/setFriendRemark', {
+        id: this.currentConversation._id,
+        remark: this.remark
       })
       this.confirmLoading = false
     },
     close() {
-      this.$eventBus.$emit('toggleBeizhuModal', {
+      this.$eventBus.$emit('toggleRemarkModal', {
         show: false,
         data: {
           currentConversation: {}
@@ -59,12 +61,12 @@ export default {
 }
 </script>
 
-<style>
-.beizhu-modal-cmp {
+<style lang="scss">
+.remark-modal-cmp {
   position: fixed;
   z-index: 1006;
   background-color: rgba(0, 0, 0, .2);
-  .beizhu {
+  .remark {
     width: 300px;
     padding: 10px 20px;
     background-color: #fff;

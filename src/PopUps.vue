@@ -5,8 +5,8 @@
       :current-conversation="currentConversation"
       @hidden-fenzu="hiddenFenzuModal"
     />
-    <beizhu-modal
-      v-if="isShowBeizhuModal"
+    <remark-modal
+      v-if="isShowRemarkModal"
       :current-conversation="currentConversation"
     />
     <transition name="fade">
@@ -33,7 +33,7 @@
 <script>
 import './../static/css/animation.scss'
 import fenzuModal from '@/components/fenzuModal'
-import beizhuModal from '@/components/beizhuModal'
+import remarkModal from '@/components/remarkModal'
 import createGroup from '@/components/createGroup'
 import bearingModal from '@/components/bearingModal'
 import messageTextMenu from '@/components/messageTypes/messageTextMenu'
@@ -42,7 +42,7 @@ export default {
     return {
       showModal: false,
       isShowFenzuModal: false,
-      isShowBeizhuModal: false,
+      isShowRemarkModal: false,
       isShowCreateGroup: false,
       isShowMsgTextMenu: false,
       currentConversation: {}, // 当前操作的会话
@@ -67,9 +67,9 @@ export default {
       this.isShowFenzuModal = show
       this.currentConversation = data.currentConversation || {}
     })
-    this.$eventBus.$on('toggleBeizhuModal', (e) => {
+    this.$eventBus.$on('toggleRemarkModal', (e) => {
       const { show, data } = e
-      this.isShowBeizhuModal = show
+      this.isShowRemarkModal = show
       this.currentConversation = data.currentConversation || {}
     })
     this.$eventBus.$on('toggleCreateGroup', (e) => {
@@ -87,7 +87,7 @@ export default {
   },
   components: {
     fenzuModal,
-    beizhuModal,
+    remarkModal,
     createGroup,
     messageTextMenu,
     bearingModal

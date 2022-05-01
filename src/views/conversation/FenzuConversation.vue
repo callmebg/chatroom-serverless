@@ -65,13 +65,13 @@ export default {
     fenzu() { // 用户的分组列表
       return this.newFenzu ? Object.keys(this.fenzuMap || {}).concat(this.newFenzu) : Object.keys(this.fenzuMap || {})
     },
-    beizhu() { // 备注map
-      return this.userInfo.friendBeizhu || {}
+    remark() { // 备注map
+      return this.userInfo.friendRemark || {}
     },
     firendsList() {
       return this.$store.state.app.allFriends
     },
-    hasBeizhuList() { // 给会话列表加上分组
+    hasRemarkList() { // 给会话列表加上分组
       const conversationList = JSON.parse(JSON.stringify(this.firendsList))
       const offlineUsers = []
       const onlineUsers = []
@@ -80,13 +80,13 @@ export default {
         item._id = item.user_id
       })
       conversationList.forEach(item => {
-        item.beizhu = this.beizhu[item.user_id] ? this.beizhu[item.user_id] : ''
+        item.remark = this.remark[item.user_id] ? this.remark[item.user_id] : ''
         this.onlineUserIds.includes(item.user_id) ? onlineUsers.push(item) : offlineUsers.push(item)
       })
       return [...onlineUsers, ...offlineUsers]
     },
     outcomeConversation() { // 根据分组来分类不同的好友
-      const conversationList = JSON.parse(JSON.stringify(this.hasBeizhuList))
+      const conversationList = JSON.parse(JSON.stringify(this.hasRemarkList))
       const fenzuMap = this.fenzuMap // {分组1: [id1, id2, ...], 分组2: [id3, id4, ...]}
       const fenzuKeys = Object.keys(fenzuMap) // [分组1, 分组2, ...]
       const res = {}
@@ -162,15 +162,16 @@ export default {
       for(var key in friendList) {
         var item = friendList[key]
         //默认为空的在我的好友这
-        var name = item.friend_group.length == 0 ? "我的好友":item.friend_group
+        var name = null == item.friend_group ? "我的好友":item.friend_group
         t[name] = []
       }
       for(var key in friendList) {
          var item = friendList[key]
         //默认为空的在我的好友这
-        var name = item.friend_group.length == 0 ? "我的好友":item.friend_group
+        var name = null == item.friend_group ? "我的好友":item.friend_group
         t[name].push(item.user_id)
       }
+      this.$store.commit('user/setFenzu', t)
       this.fenzuMap = t
     },
     changeCurrentConversation(item) {
@@ -203,7 +204,7 @@ export default {
           type: 'warning'
         })
       }
-      const params = {fenzuName: this.currClickFenzu, userId: this.userInfo._id}
+      const params = {fenzuName: this.currClickFenzu, userId: this.userInfo.user_id}
       await this.$http.deleteFenzu(params)
     },
     setEditFenzu() {
@@ -240,7 +241,7 @@ export default {
     fenzuMenu
   },
   created() {
-    this.$eventBus.$on('addNewFriend', () => {
+    this.$eventBus.$on('changeFriend', () => {
       this.getMyFriends()
     })
     this.getMyFriends()

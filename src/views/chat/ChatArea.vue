@@ -164,9 +164,10 @@ export default {
       return {
         roomId: this.currentConversation.roomId,
         senderId: this.userInfo.user_id,
+        senderAvatar: this.userInfo.user_profile,
+        senderNickname: this.userInfo.user_nickname,
         conversationType: this.currentConversation.conversationType,
         currentConversation: this.currentConversation,
-        time: Date.now()
       }
     },
     getImgUploadResult(res) {
@@ -262,7 +263,8 @@ export default {
         messageType: "text",
       }
       console.log("sendNewMessage", newMessage)
-      this.messages = [...this.messages, newMessage]
+      // 我觉得应该在接收消息那设置
+      //this.messages = [...this.messages, newMessage]
       this.$socket.emit("sendNewMessage", newMessage)
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
@@ -270,7 +272,7 @@ export default {
           roomId: this.currentConversation.roomId,
           news: newMessage
         }
-      })
+      }) 
       this.messageText = ""
     },
     joinChatRoom() {
@@ -304,7 +306,7 @@ export default {
           this.page++
         }
       } else if (conversationType === conversationTypes.group) {
-        const { data, status } = await this.$http.getRecentGroupNews(params)
+        const { data, status } = await this.$http.getRecentNews(params)
         this.setLoading(false)
         this.isLoading = false
         if (data.success) {
@@ -328,27 +330,6 @@ export default {
       if (this.hasMore) {
         this.getRecentNews(false)
       }
-    },
-    watchWebRtcMsg() {
-      this.$eventBus.$on('web_rtc_msg', (e) => {
-        const { type } = e
-        // const 
-        const common = this.generatorMessageCommon()
-        const newMessage = {
-          ...common,
-          message: '',
-          messageType: type
-        }
-        this.messages = [...this.messages, newMessage]
-        this.$socket.emit("sendNewMessage", newMessage)
-        this.$store.dispatch('news/SET_LAST_NEWS', {
-          type: 'edit',
-          res: {
-            roomId: this.currentConversation.roomId,
-            news: newMessage
-          }
-        })
-      })
     },
     /**聊天内容输入框自动聚焦 */
     chatInpAutoFocus() {
@@ -391,7 +372,6 @@ export default {
     })
   },
   mounted() {
-    this.watchWebRtcMsg()
   },
   beforeDestroy() {
     console.log('chatArea BeforeDestroy')

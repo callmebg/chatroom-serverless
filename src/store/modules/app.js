@@ -1,9 +1,6 @@
 const state = {
   sysUsers: '' || JSON.parse(window.localStorage.getItem('sysusers')),
-  isVideoing: false,
-  isAudioing: false,
   currentConversation: {}, // 当前的会话，在白板协作、音视频通话会使用
-  agreeFriendValidate: false, // 同意好友申请
   recentConversation: [], // 最近的会话列表
   onlineUser: [], // 在线用户
   allConversation: [], // 所有会话
@@ -16,17 +13,8 @@ const mutations = {
     const dataStr = JSON.stringify(data)
     window.localStorage.setItem('sysusers', dataStr)
   },
-  setIsAudioing(state, data) {
-    state.isAudioing = data
-  },
-  setIsVideoing(state, data) {
-    state.isVideoing = data
-  },
   setCurrentConversation(state, data) {
     state.currentConversation = data
-  },
-  setAgreeFriendValidate(state, data) {
-    state.agreeFriendValidate = data
   },
   setRecentConversation(state, data) {
     const res = data.data
@@ -57,7 +45,14 @@ const mutations = {
       state.allFriends = resource
     } else if (type === 'delete') {
       // resource === 删除被好友ID
-      state.allFriends = (state.allFriends || []).filter(item => item._id !== resource)
+      state.allFriends = (state.allFriends || []).filter(item => item.user_id !== resource)
+    }
+  },
+  setFriendRemark(state, data) {
+    for(var key in state.allFriends) {
+      if(state.allFriends[key]["user_id"] == data["id"]) {
+        state.allFriends[key]["friend_remark"] = data["remark"]
+      }
     }
   }
 }
@@ -66,14 +61,8 @@ const actions = {
   SET_SYS_USERS({commit}, data) {
     commit('setSysUsers', data)
   },
-  SET_IS_VIDEOING({commit}, data) {
-    commit('setIsVideoing', data)
-  },
   SET_CURRENT_CONVERSATION({commit}, data) {
     commit('setCurrentConversation', data)
-  },
-  SET_AGREE_FRIEND_VALIDATE({commit}, data) {
-    commit('setAgreeFriendValidate', data)
   },
   SET_RECENT_CONVERSATION({commit}, data) {
     commit('setRecentConversation', data)

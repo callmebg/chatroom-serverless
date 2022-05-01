@@ -9,14 +9,14 @@
     <span class="menu-item operation-text" @click.stop="viewProfile"
       >查看资料</span
     >
-    <span class="menu-item operation-text" @click.stop="modifyBeizhu"
+    <span class="menu-item operation-text" @click.stop="modifyRemark"
       >修改备注</span
     >
     <span class="menu-item operation-text" @click.stop="switchFenzu"
       >切换分组</span
     >
     <el-popover placement="top" width="160" v-model="showDelPop">
-      <p>删除好友后聊天记录等信息也会被删除，是否删除？</p>
+      <p>确定删除好友'{{this.conversation.user_nickname}}'？</p>
       <div style="text-align: right; margin: 0">
         <el-button size="mini" type="text" @click="showDelPop = false"
           >取消</el-button
@@ -115,8 +115,8 @@ export default {
       })
       this.$emit('hiddenMenu')
     },
-    modifyBeizhu() {
-      this.$eventBus.$emit('toggleBeizhuModal', {
+    modifyRemark() {
+      this.$eventBus.$emit('toggleRemarkModal', {
         show: true,
         data: {
           currentConversation: this.conversation
@@ -126,11 +126,14 @@ export default {
     },
     async deleteFriend() {
       const { data } = await this.$http.deleteFriend({
-        userM: this.userInfo._id,
-        userY: this.conversation._id
+        friendId: this.conversation._id
       })
-      if (data.status === 2000) {
-        this.remove()
+      if (data.success) {
+        this.$store.dispatch('app/SET_ALL_FRIENDS', {
+          resource: this.conversation._id,
+          type: 'delete'
+        })
+        // 删除会话
         this.$store.dispatch('app/SET_ALL_FRIENDS', {
           resource: this.conversation._id,
           type: 'delete'

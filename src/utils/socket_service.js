@@ -76,8 +76,8 @@ export default class SocketService {
           })
           this.emit("getActiveUser")
           break
-        case "addNewFriend":
-          this.vue.$eventBus.$emit("addNewFriend")
+        case "changeFriend":
+          this.vue.$eventBus.$emit("changeFriend")
           break  
       }
     }
