@@ -9,13 +9,19 @@ export default {
   getMyGroup() {
     return request.get(`group/getMyGroup`)
   },
+  exitGroup(data) {
+    return request.post(`group/exitGroup`, data)
+  },
+  getGroupInfo(id) {
+    return request.post(`group/getGroupInfo?id=${id}`)
+  },
   /**
-   * 根据id获取群聊详情
+   * 根据id获取群聊成员
    * @param {*} data 
    */
-  getGroupInfo(data) {
+  getGroupUser(data) {
     let { id } = data
-    return request.get(`group/groupInfo?id=${id}`)
+    return request.get(`group/getUser?id=${id}`)
   },
   preFetchGroup(data) {
     const { q, page, pageSize } = data // q可以是id 或者名字

@@ -1,5 +1,5 @@
 <template>
-  <div class="remark-modal-cmp all0">
+  <div class="remark-model-cmp all0">
     <div class="remark hor-ver-center" v-loading="confirmLoading">
       <span class="p-r-t el-icon-close" @click="close"></span>
       <div class="header">
@@ -39,7 +39,7 @@ export default {
       }
       await this.$http.modifyFriendRemark(params)
       this.currentConversation.friend_remark = this.remark
-      this.$eventBus.$emit('toggleRemarkModal', {
+      this.$eventBus.$emit('toggleRemarkModel', {
         show: false,
         data: {}
       })
@@ -50,7 +50,7 @@ export default {
       this.confirmLoading = false
     },
     close() {
-      this.$eventBus.$emit('toggleRemarkModal', {
+      this.$eventBus.$emit('toggleRemarkModel', {
         show: false,
         data: {
           currentConversation: {}
@@ -62,7 +62,7 @@ export default {
 </script>
 
 <style lang="scss">
-.remark-modal-cmp {
+.remark-model-cmp {
   position: fixed;
   z-index: 1006;
   background-color: rgba(0, 0, 0, .2);

@@ -6,69 +6,30 @@
       >
       <span
         class="oper-item operation-text"
-        @click.stop="showFenzu"
-        v-if="currentConversation.conversationType === conversationTypes.friend"
-        >切换分组</span
-      >
-      <span
-        class="oper-item operation-text"
         slot="reference"
         @click.stop="showRemark"
         v-if="currentConversation.conversationType === conversationTypes.friend"
         >修改备注</span
       >
       <span
+        class="oper-item operation-text"
+        @click.stop="showFenzu"
+        v-if="currentConversation.conversationType === conversationTypes.friend"
+        >切换分组</span
+      >
+      <span
         class="oper-item operation-text__danger"
         v-if="currentConversation.conversationType === conversationTypes.friend"
+        @click.stop="deleteExit"
         >删除好友</span
       >
       <span
         class="oper-item operation-text__danger"
         v-if="currentConversation.conversationType === conversationTypes.group"
+        @click.stop="deleteExit"
         >退出群聊</span
       >
     </div>
-        <el-dialog
-      title="好友信息"
-      v-if="dialogVisible"
-      :visible.sync="dialogVisible"
-      width="30%"
-    >
-      <div class="header">
-        <el-row :gutter="10">
-          <el-col :span="6">
-            <el-avatar
-              :size="120"
-              :src="IMG_URL + this.friendInfo.user_profile"
-            ></el-avatar
-          ></el-col>
-          <el-col :span="16">
-            <div class="info-list">
-              <div class="info-item">Id：{{ friendInfo.user_id }}</div>
-              <div class="info-item">账号：{{ friendInfo.user_account }}</div>
-              <div class="info-item">昵称：{{ friendInfo.user_nickname }}</div>
-              <div class="info-item">
-                性别：{{
-                  friendInfo.user_sex == 2
-                    ? '保密'
-                    : friendInfo.user_sex == 0
-                    ? '女'
-                    : '男'
-                }}
-              </div>
-            </div>
-          </el-col>
-        </el-row>
-        <div class="info-list">
-          <div class="info-item">生日：{{ friendInfo.user_birthday }}</div>
-          <div class="info-item">签名：{{ friendInfo.user_signature }}</div>
-          <div class="info-item">邮箱：{{ friendInfo.user_mail }}</div>
-          <div class="info-item">
-            注册时间：{{ friendInfo.user_create_time }}
-          </div>
-        </div>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -80,9 +41,7 @@ export default {
     return {
       conversationTypes,
       newRemark: '',
-      IMG_URL: process.env.IMG_URL,
-      dialogVisible: false,
-      friendInfo: null
+      IMG_URL: process.env.IMG_URL
     }
   },
   computed: {
@@ -91,17 +50,19 @@ export default {
     }
   },
   methods: {
+    deleteExit() {
+      this.$eventBus.$emit('toggleExit', this.currentConversation)
+    },
     showInfo() {
-      var that = this
-      this.$http.getUserInfo(this.conversation.user_id).then(res => {
-        if (res.data.success) {
-          that.friendInfo = res.data.data
-          that.dialogVisible = true
+      this.$eventBus.$emit('toggleInfoModel', {
+        show: true,
+        data: {
+          currentConversation: this.currentConversation
         }
       })
     },
     showFenzu() {
-      this.$eventBus.$emit('toggleFenzuModal', {
+      this.$eventBus.$emit('toggleFenzuModel', {
         show: true,
         data: {
           currentConversation: this.currentConversation
@@ -109,7 +70,7 @@ export default {
       })
     },
     showRemark() {
-      this.$eventBus.$emit('toggleRemarkModal', {
+      this.$eventBus.$emit('toggleRemarkModel', {
         show: true,
         data: {
           currentConversation: this.currentConversation
@@ -122,23 +83,17 @@ export default {
 
 <style lang="scss">
 .setting-panel-cmp {
-  height: 100%;
   background-color: #fff;
   .operation-list {
-    height: 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     .oper-item {
       line-height: 20px;
       margin-top: 10px;
-    }
-  }
-  .header {
-    .info-list {
-      margin-top: 10px;
-      font-size: medium;
-      font-weight: bold;
+      &:last-child {
+	      margin-bottom: 10px;
+	    }
     }
   }
 }

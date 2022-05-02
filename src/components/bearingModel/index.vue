@@ -1,9 +1,9 @@
 /**
-  通用承载modal框
+  通用承载model框
  */
 <template>
-  <div class="bearing-modal all0">
-    <div class="bearing-modal-content hor-ver-center" :style="{'width': width + 'px'}">
+  <div class="bearing-model all0">
+    <div class="bearing-model-content hor-ver-center" :style="{'width': width + 'px'}">
       <div class="header">
         <span>{{title}}</span>
         <i class="el-icon-close p-r-t" @click="close"></i>
@@ -25,7 +25,7 @@ export default {
       type: String
     },
     width: {
-      type: Number, // bearing-modal-content宽度
+      type: Number, // bearing-model-content宽度
       default: 300
     },
     showFooter: {
@@ -34,7 +34,7 @@ export default {
     }
     /**
      * 绑定的函数
-     * 1. close；关闭modal框
+     * 1. close；关闭model框
      * 2. submit；确认
      */
   },
@@ -47,11 +47,11 @@ export default {
 </script>
 
 <style lang="scss">
-.bearing-modal {
+.bearing-model {
   position: fixed;
   z-index: 2003;
   background-color: rgba(0, 0, 0, .2);
-  .bearing-modal-content {
+  .bearing-model-content {
     position: relative;
     width: 300px;
     padding: 10px 20px;

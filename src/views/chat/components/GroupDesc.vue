@@ -1,7 +1,7 @@
 <template>
   <div class="group-desc-com">
     <div class="member">
-      <group-user-list :userlist="groupMembers" />
+      <group-user-list :userlist="groupMembers" :currentConversation="currentConversation"/>
     </div>
   </div>
 </template>
@@ -19,11 +19,10 @@ export default {
   methods: {
     async fetchGroupInfo() {
       if (this.currentConversation.conversationType === 'GROUP') {
-        const id = this.currentConversation.group_Id
-        const { data } = await this.$http.getGroupInfo({id})
-        const { data: groupInfo, status } = data
-        if (status === 2000) {
-          this.groupMembers = groupInfo.users
+        const id = this.currentConversation.group_id
+        const { data } = await this.$http.getGroupUser({id})
+        if (data.success) {
+          this.groupMembers = data.data
         }
       }
     }

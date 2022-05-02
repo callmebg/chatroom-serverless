@@ -1,5 +1,5 @@
 <template>
-  <div class="fenzhu-modal-cmp all0">
+  <div class="fenzhu-model-cmp all0">
     <div class="switch-fenzu hor-ver-center" v-loading="confirmLoading">
       <div class="header">
         <span class="p-l-t el-icon-circle-plus-outline" @click="showAddFenzu">
@@ -103,10 +103,10 @@ export default {
 </script>
 
 <style lang="scss">
-.v-modal {
+.v-model {
   display: none;
 }
-.fenzhu-modal-cmp {
+.fenzhu-model-cmp {
   position: fixed;
   z-index: 2003;
   background-color: rgba(0, 0, 0, .2);

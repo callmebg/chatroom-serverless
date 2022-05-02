@@ -38,8 +38,6 @@ import ConversationList from '@/views/conversation/ConversationList'
 import ChatArea from '@/views/chat/ChatArea'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
 import { fromatTime, saveRecentConversationToLocal } from '@/utils'
-import weather from '@/components/customWeather'
-import partTitle from '@/components/partTitle'
 import chatSvg from '@/SVGComponents/chat'
 // import AMap from '@/components/customMap'
 export default {
@@ -119,8 +117,6 @@ export default {
   components: {
     ConversationList,
     ChatArea,
-    weather,
-    partTitle,
     chatSvg
     // AMap
   }

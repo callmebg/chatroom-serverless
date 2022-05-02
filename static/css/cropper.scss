@@ -23,7 +23,7 @@
   &-canvas,
   &-drag-box,
   &-crop-box,
-  &-modal {
+  &-model {
     bottom: 0;
     left: 0;
     position: absolute;
@@ -41,7 +41,7 @@
     opacity: 0;
   }
 
-  &-modal {
+  &-model {
     background-color: #000;
     opacity: .5;
   }

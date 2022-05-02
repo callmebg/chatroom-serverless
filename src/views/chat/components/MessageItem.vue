@@ -22,9 +22,9 @@
         :style="messageitem.senderId === userInfo.user_id ? {'flex-direction': 'row-reverse'} : {}"
       >
         <span v-if="currentConversation.isGroup" class="item name">
-          <router-link :to="`/user/${messageitem.senderId}`" class="not-link" style="color: #606266">
+          <span class="not-link" style="color: #606266" v-copy="messageitem.senderNickname">
             {{messageitem.senderNickname}}
-          </router-link>
+          </span>
         </span>
         <span
           class="item time"

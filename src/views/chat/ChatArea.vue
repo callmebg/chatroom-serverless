@@ -118,7 +118,7 @@ export default {
     }),
     messagesOutcome() {
       return this.messages.filter(item => {
-        return item.roomId === this.currentConversation.roomId || this.swaproomId(item.roomId) === this.currentConversation.roomId
+        return item.roomId == this.currentConversation.roomId || this.swaproomId(item.roomId) == this.currentConversation.roomId
       })
     },
     device() {
@@ -306,7 +306,7 @@ export default {
           this.page++
         }
       } else if (conversationType === conversationTypes.group) {
-        const { data, status } = await this.$http.getRecentNews(params)
+        const { data } = await this.$http.getRecentNews(params)
         this.setLoading(false)
         this.isLoading = false
         if (data.success) {

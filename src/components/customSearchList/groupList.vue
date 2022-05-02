@@ -24,7 +24,7 @@
           type="primary"
           size="small"
           icon="el-icon-plus"
-          :disabled="(groups || []).includes(item.group_id)"
+          :disabled="item.group_owner == userInfo.user_id"
           @click="showAdditionDialog(item)"
         >添加
         </el-button>
@@ -64,6 +64,11 @@ export default {
       additionMessage: '',
       seleceItem: {},
       loading: false
+    }
+  },
+  computed: {
+    userInfo() {
+      return this.$store.state.user.userInfo
     }
   },
   methods: {

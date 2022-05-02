@@ -30,7 +30,7 @@ export default {
       const msg = this.msgItem
       const friendRemark = this.friendRemark
       let res = ''
-      if (msg.senderId === this.userInfo._id) {
+      if (msg.senderId === this.userInfo.user_id) {
         res = '我'
       } else {
         res = friendRemark[msg.senderId] ? friendRemark[msg.senderId] : msg.senderNickname

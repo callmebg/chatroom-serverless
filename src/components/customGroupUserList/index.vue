@@ -4,11 +4,11 @@
       <span class="title">群成员（{{groupOnlineUser.length}}/{{userlist.length}}）</span>
     </header>
     <div class="user-list">
-      <div class="user-item" v-for="item in outcomeUserList" :key="item._id">
+      <div class="user-item" v-for="item in outcomeUserList" :key="item.user_id">
         <el-avatar
-          :class="(onlineUser || []).includes(item.userId._id) ? '' : 'offline'"
+          :class="item.user_status == 'open' ? '' : 'offline'"
           :size="20"
-          :src="IMG_URL + item.userId.photo"
+          :src="IMG_URL + item.user_profile"
           @error="() => true"
         >
           <img
@@ -17,9 +17,9 @@
         </el-avatar>
         <div class="user-detail">
           <span class="normal-font detail-item ellipsis">
-            {{item.userId.remark ? item.userId.remark : item.userId.nickname}}
+            {{item.user_nickname}}
           </span>
-          <span class="is-holder secondary-font" v-if="item.holder">· 群主</span>
+          <span class="is-holder secondary-font" v-if="item.user_id == currentConversation.group_owner">· 群主</span>
         </div>
       </div>
     </div>
@@ -30,7 +30,8 @@
 export default {
   name: "GroupUserListComponent",
   props: {
-    userlist: Array
+    userlist: Array,
+    currentConversation: Object
   },
   data() {
     return {
@@ -38,12 +39,9 @@ export default {
     }
   },
   computed: {
-    onlineUser() { // 所有的在线用户
-      return this.$store.state.app.onlineUser
-    },
     groupOnlineUser() {
       return this.userlist.filter(item => {
-        return (this.onlineUser || []).includes(item.userId._id)
+        return item.user_status == "open"
       })
     },
     remark() { // 备注Map {好友id1: 备注1, 好友id2: 备注2}
@@ -76,7 +74,7 @@ export default {
   }
   .user-list {
     flex: 1;
-    overflow: scroll;
+    overflow: auto;
     .user-item {
       padding: 5px 0;
       display: flex;

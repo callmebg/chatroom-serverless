@@ -1,17 +1,22 @@
 <template>
   <div class="pop-ups">
-    <fenzu-modal
-      v-if="isShowFenzuModal"
+    <info-model
+      v-if="isShowInfoModel"
       :current-conversation="currentConversation"
-      @hidden-fenzu="hiddenFenzuModal"
+      @hidden-info="hiddenInfoModel"
     />
-    <remark-modal
-      v-if="isShowRemarkModal"
+    <fenzu-model
+      v-if="isShowFenzuModel"
+      :current-conversation="currentConversation"
+      @hidden-fenzu="hiddenFenzuModel"
+    />
+    <remark-model
+      v-if="isShowRemarkModel"
       :current-conversation="currentConversation"
     />
     <transition name="fade">
-      <bearing-modal
-        v-if="showModal && isShowCreateGroup"
+      <bearing-model
+        v-if="showModel && isShowCreateGroup"
         @close="$eventBus.$emit('toggleCreateGroup', { show: false })"
         title="创建群聊"
         :width="400"
@@ -19,7 +24,7 @@
         <template slot="body">
           <create-group />
         </template>
-      </bearing-modal>
+      </bearing-model>
     </transition>
     <message-text-menu
       v-if="isShowMsgTextMenu"
@@ -32,17 +37,20 @@
 
 <script>
 import './../static/css/animation.scss'
-import fenzuModal from '@/components/fenzuModal'
-import remarkModal from '@/components/remarkModal'
+import infoModel from '@/components/infoModel'
+import fenzuModel from '@/components/fenzuModel'
+import remarkModel from '@/components/remarkModel'
 import createGroup from '@/components/createGroup'
-import bearingModal from '@/components/bearingModal'
+import bearingModel from '@/components/bearingModel'
 import messageTextMenu from '@/components/messageTypes/messageTextMenu'
+import { conversationTypes } from '@/const'
 export default {
   data() {
     return {
-      showModal: false,
-      isShowFenzuModal: false,
-      isShowRemarkModal: false,
+      showModel: false,
+      isShowInfoModel: false,
+      isShowFenzuModel: false,
+      isShowRemarkModel: false,
       isShowCreateGroup: false,
       isShowMsgTextMenu: false,
       currentConversation: {}, // 当前操作的会话
@@ -50,34 +58,97 @@ export default {
       currentMessage: {}, // 当前操作的消息
       msgTextMenuLeft: 0,
       msgTextMenuTop: 0
-
     }
   },
   methods: {
-    hiddenFenzuModal() {
-      this.isShowFenzuModal = false
+    hiddenInfoModel() {
+      this.isShowInfoModel = false
+    },
+    hiddenFenzuModel() {
+      this.isShowFenzuModel = false
     },
     close() {
-      this.showModal = false
+      this.showModel = false
+    },
+    async deleteExit(conversation) {
+      if (conversation.conversationType === conversationTypes.friend) {
+        var data = await this.$http.deleteFriend({
+          friendId: conversation._id
+        })
+        if (data.data.success) {
+          this.$store.dispatch('app/SET_ALL_FRIENDS', {
+            resource: conversation._id,
+            type: 'delete'
+          })
+          // 删除会话
+          this.$store.dispatch('app/SET_ALL_FRIENDS', {
+            resource: conversation._id,
+            type: 'delete'
+          })
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+        }
+      } else {
+        var data = await this.$http.exitGroup({
+          groupId: conversation._id
+        })
+        if (data.data.success) {
+          // 待删除会话和群
+          this.$message({
+            message: '删除成功！',
+            type: 'success'
+          })
+        }
+      }
     }
   },
   created() {
-    this.$eventBus.$on('toggleFenzuModal', (e) => {
+    // 触发删除好友或者退出群聊
+    this.$eventBus.$on('toggleExit', e => {
+      var tip = '此操作将永久删除, 是否继续?'
+      if (e.conversationType === conversationTypes.friend) {
+        tip = "确定是否删除好友'" + e.user_nickname + "'"
+      } else {
+        tip = "确定是否退出群聊'" + e.group_name + "'"
+      }
+      this.$confirm(tip, '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          this.deleteExit(e)
+        })
+        .catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消操作'
+          })
+        })
+    })
+    this.$eventBus.$on('toggleInfoModel', e => {
       const { show, data } = e
-      this.isShowFenzuModal = show
+      this.isShowInfoModel = show
       this.currentConversation = data.currentConversation || {}
     })
-    this.$eventBus.$on('toggleRemarkModal', (e) => {
+    this.$eventBus.$on('toggleFenzuModel', e => {
       const { show, data } = e
-      this.isShowRemarkModal = show
+      this.isShowFenzuModel = show
       this.currentConversation = data.currentConversation || {}
     })
-    this.$eventBus.$on('toggleCreateGroup', (e) => {
+    this.$eventBus.$on('toggleRemarkModel', e => {
+      const { show, data } = e
+      this.isShowRemarkModel = show
+      this.currentConversation = data.currentConversation || {}
+    })
+    this.$eventBus.$on('toggleCreateGroup', e => {
       const { show } = e
-      this.showModal = show
+      this.showModel = show
       this.isShowCreateGroup = show
     })
-    this.$eventBus.$on('toggleMsgTextMenu', (e) => {
+    this.$eventBus.$on('toggleMsgTextMenu', e => {
       const { show, data, left, top } = e
       this.isShowMsgTextMenu = show
       this.currentMessage = data
@@ -86,11 +157,12 @@ export default {
     })
   },
   components: {
-    fenzuModal,
-    remarkModal,
+    infoModel,
+    fenzuModel,
+    remarkModel,
     createGroup,
     messageTextMenu,
-    bearingModal
+    bearingModel
   }
 }
 </script>
