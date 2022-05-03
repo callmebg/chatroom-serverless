@@ -82,7 +82,6 @@
 <script>
 import { mapState } from 'vuex'
 import myAside from './components/Aside'
-import { saveRecentConversationToLocal } from '@/utils'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
 import NotifyAudio from './../../../static/audio/notify.mp3'
 import { MSG_TYPES } from '@/const'
@@ -102,17 +101,13 @@ export default {
       showTheme: false,
       showMain: true, // 聊天区域是否展示
       asideTranslateX: -70,
-      IMG_URL: process.env.IMG_URL
+      IMG_URL: process.env.IMG_URL,
+      opacity: 0.88 //透明度
     }
   },
   computed: {
     ...mapState('user', {
       userInfo: 'userInfo'
-    }),
-    ...mapState('theme', {
-      opacity: 'opacity',
-      blur: 'blur',
-      bgImg: 'bgImg'
     }),
     allConversation() {
       return this.$store.state.app.allConversation
@@ -144,22 +139,6 @@ export default {
     myAside
   },
   methods: {
-    /**
-     * 获取系统用户（比如发送验证消息的系统用户）,然后加入会话列表
-     */
-    async sysUserJoinSocket() {
-      const { data } = await this.$http.getSysUsers()
-      const { data: sysUserList, status } = data
-      if (status === 2000) {
-        sysUserList.forEach(item => {
-          this.$store.dispatch('app/SET_SYS_USERS', sysUserList)
-          const val = {
-            roomId: item._id + '-' + this.userInfo._id
-          }
-          this.$socket.emit('join', val)
-        })
-      }
-    },
     setShowTheme(flag) {
       this.showTheme = flag
     },
@@ -186,7 +165,7 @@ export default {
       // 自己发的信息回显就不用提示辣
       if(news.senderId != this.userInfo.user_id) {
         this.$notify({
-          title: '收到新消息',
+          title: '收到新消息 来自:'+news.senderNickname,
           message,
           type: 'success'
         })
@@ -199,6 +178,9 @@ export default {
       const senderConversation = this.allConversation.find(
         item => item.roomId === news.roomId
       )
+      //console.log("news", news)
+      //console.log("allConversation", this.allConversation)
+      //console.log("senderConversation", senderConversation)
       this.$store.dispatch('app/SET_RECENT_CONVERSATION', {
         type: 'add',
         data: senderConversation
@@ -210,16 +192,6 @@ export default {
           roomId: news.roomId,
           news: news
         }
-      })
-      saveRecentConversationToLocal(news.senderId)
-    },
-    receiveValidateMessage(news) {
-      this.$refs['audio'].play()
-      console.log('收到新的验证消息', news)
-      this.$store.dispatch('news/SET_UNREAD_NEWS', {
-        roomId: news.roomId,
-        count: 1,
-        type: SET_UNREAD_NEWS_TYPE_MAP.add
       })
     },
     receiveAgreeFriendValidate(data) {
@@ -250,7 +222,6 @@ export default {
         this.asideTranslateX = -70
       })
     }
-    this.sysUserJoinSocket()
   },
   created() {
     this.$eventBus.$on('receiveMessage', data => {
@@ -271,7 +242,7 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
-  background-color: #e9ebee;
+  background-color: #ffffff;
   position: relative;
   transition: all 0.4s ease-out;
   .toggle {
@@ -308,7 +279,7 @@ export default {
       margin: -336px 0 0 -510px;
       width: 1020px;
       height: 672px;
-      background-color: #e9ebee;
+      background-color: #eeeeee;
       color: #333;
       border-radius: 5px;
       padding: 0;

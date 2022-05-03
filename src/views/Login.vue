@@ -38,17 +38,6 @@
         </el-form-item>
       </el-form>
       <el-form class="register-form" v-if="!isLoginState">
-        <!--
-        <div class="avatar" @click="setShowChooseAvatar(true)">
-            <img :src="avatar" alt="" srcset="" width="100" height="100" style="border-radius: 50%">
-          <el-avatar :size="100" :src="avatar">
-            <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
-          </el-avatar>
-          <span class="secondary-font" style="display: inline-block; margin-bottom: 5px">
-            点击头像更换头像
-          </span>
-        </div>
-        -->
         <el-form-item>
           <el-input
             type="text"

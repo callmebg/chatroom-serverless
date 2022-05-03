@@ -4,7 +4,6 @@
     :style="messageItemComStyle"
   >
     <el-avatar
-      v-if="messageitem.messageType !== MSG_TYPES.sys"
       class="avatar"
       size="large"
       :src="messageitem.senderId === userInfo.user_id ? IMG_URL + userInfo.user_profile : IMG_URL + messageitem.senderAvatar"
@@ -17,7 +16,6 @@
       :style="messageitem.messageType === MSG_TYPES.sys ? 'width: 100%' : ''"
     >
       <span
-        v-if="messageitem.messageType !== MSG_TYPES.sys"
         class="secondary-font header"
         :style="messageitem.senderId === userInfo.user_id ? {'flex-direction': 'row-reverse'} : {}"
       >

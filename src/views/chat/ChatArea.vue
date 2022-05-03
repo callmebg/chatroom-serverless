@@ -4,9 +4,16 @@
       :currentConversation="currentConversation"
       :set-current-conversation="setCurrentConversation"
     />
-    <div :class="currentConversation.conversationType !== 'GROUP' ? 'main no-group' : 'main'">
+    <div
+      :class="
+        currentConversation.conversationType !== 'GROUP'
+          ? 'main no-group'
+          : 'main'
+      "
+    >
       <div class="message-list-container">
-        <message-list ref='messagelist'
+        <message-list
+          ref="messagelist"
           @load-message="loadmessage"
           :messagelist="messagesOutcome"
           :scrollbottom="scrollBottom"
@@ -18,48 +25,80 @@
           :set-last-enter-time="setLastEnterTime"
         />
       </div>
-      <div class="group-desc" v-if="device !== 'Mobile' && currentConversation.conversationType === 'GROUP'">
-        <group-desc :currentConversation="currentConversation" :key="datetamp" />
+      <div
+        class="group-desc"
+        v-if="
+          device !== 'Mobile' &&
+            currentConversation.conversationType === 'GROUP'
+        "
+      >
+        <group-desc
+          :currentConversation="currentConversation"
+          :key="datetamp"
+        />
       </div>
     </div>
     <div class="message-edit-container">
       <div class="send-type">
-        <i class="item iconfont icon-emoji" @click.stop="showEmojiCom = !showEmojiCom"></i>
-        <i class="item el-icon-picture" @click.stop="showUpImgCom = !showUpImgCom" />
-        <i class="item el-icon-folder" @click.stop="showUpFileCom = !showUpFileCom"/>
+        <i
+          class="item iconfont icon-emoji"
+          @click.stop="showEmojiCom = !showEmojiCom"
+        ></i>
+        <i
+          class="item el-icon-picture"
+          @click.stop="showUpImgCom = !showUpImgCom"
+        />
+        <i
+          class="item el-icon-folder"
+          @click.stop="showUpFileCom = !showUpFileCom"
+        />
       </div>
       <div class="operation">
-        <el-button @click="send" type="success" size="small" round>发送</el-button>
-        <el-button @click="send" type="danger" size="small" round>清空</el-button>
+        <el-button @click="send" type="success" size="small" round
+          >发送</el-button
+        >
+        <el-button @click="send" type="danger" size="small" round
+          >清空</el-button
+        >
       </div>
-      <div style="display: none" contenteditable="true" class="textarea" @input="test">
-
-      </div>
-      <textarea ref="chatInp" class="textarea" v-model="messageText" maxlength="200" @input="scrollBottom = true" @keydown.enter="send($event)"></textarea>
+      <textarea
+        ref="chatInp"
+        class="textarea"
+        v-model="messageText"
+        maxlength="200"
+        @input="scrollBottom = true"
+        @keydown.enter="send($event)"
+      >
+      </textarea>
       <transition name="fade">
-        <up-file v-if="showUpFileCom" class="emoji-component"/>
+        <up-file v-if="showUpFileCom" class="emoji-component" />
       </transition>
       <transition name="fade">
-        <up-img v-if="showUpImgCom" class="emoji-component"/>
+        <up-img v-if="showUpImgCom" class="emoji-component" />
       </transition>
       <transition name="fade">
-        <custom-emoji v-if="showEmojiCom" class="emoji-component" @addemoji="addEmoji" />        
+        <custom-emoji
+          v-if="showEmojiCom"
+          class="emoji-component"
+          @addemoji="addEmoji"
+        />
       </transition>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex"
-import chatHeader from "./components/Header"
-import messageList from "./components/MessageList"
-import { SET_UNREAD_NEWS_TYPE_MAP } from "@/store/constants"
+import { mapState } from 'vuex'
+import chatHeader from './components/Header'
+import messageList from './components/MessageList'
+import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
 import { conversationTypes, MSG_TYPES } from '@/const'
 import customEmoji from '@/components/customEmoji'
 import upImg from '@/components/customUploadImg'
 import upFile from '@/components/customUploadFile'
 import groupDesc from './components/GroupDesc'
 import xss from '@/utils/xss'
+import {swapRoomId} from '@/utils'
 export default {
   props: {
     currentConversation: Object,
@@ -68,7 +107,7 @@ export default {
   },
   data() {
     return {
-      messageText: "",
+      messageText: '',
       messages: [],
       showEmojiCom: false,
       showUpImgCom: false,
@@ -85,12 +124,15 @@ export default {
     }
   },
   computed: {
-    ...mapState("user", {
-      userInfo: "userInfo"
+    ...mapState('user', {
+      userInfo: 'userInfo'
     }),
     messagesOutcome() {
       return this.messages.filter(item => {
-        return item.roomId == this.currentConversation.roomId || this.swaproomId(item.roomId) == this.currentConversation.roomId
+        return (
+          item.roomId == this.currentConversation.roomId ||
+          swapRoomId(item.roomId) == this.currentConversation.roomId
+        )
       })
     },
     device() {
@@ -99,11 +141,11 @@ export default {
   },
   methods: {
     receiveMessage(news) {
-      console.log("收到新的消息", news)
+      console.log('收到新的消息', news)
       this.messages = [...this.messages, news]
       if (news.roomId === this.currentConversation.roomId) {
         setTimeout(() => {
-          this.$store.dispatch("news/SET_UNREAD_NEWS", {
+          this.$store.dispatch('news/SET_UNREAD_NEWS', {
             roomId: news.roomId,
             count: 0,
             type: SET_UNREAD_NEWS_TYPE_MAP.clear
@@ -113,17 +155,6 @@ export default {
     },
     conversationList(list) {
       // console.log("当前会话列表", list)
-    },
-    swaproomId(roomId){
-      var two = roomId.split("-")
-      if(two.length == 2) {
-        return two[1] + '-' + two[0]
-      }else{
-        return roomId
-      }
-    },
-    test(e) {
-      console.log(e, 123132)
     },
     /**最后进入该会话的时间 */
     setLastEnterTime(time) {
@@ -136,7 +167,7 @@ export default {
         senderAvatar: this.userInfo.user_profile,
         senderNickname: this.userInfo.user_nickname,
         conversationType: this.currentConversation.conversationType,
-        currentConversation: this.currentConversation,
+        currentConversation: this.currentConversation
       }
     },
     /**
@@ -147,10 +178,10 @@ export default {
       const newMessage = {
         ...common,
         message: url,
-        messageType: type,
+        messageType: type
       }
       //this.messages = [...this.messages, newMessage]
-      this.$socket.emit("sendNewMessage", newMessage)
+      this.$socket.emit('sendNewMessage', newMessage)
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
@@ -171,23 +202,23 @@ export default {
       const newMessage = {
         ...common,
         message: xss(this.messageText),
-        messageType: "text",
+        messageType: 'text'
       }
-      console.log("sendNewMessage", newMessage)
+      console.log('sendNewMessage', newMessage)
       // 我觉得应该在接收消息那设置
       //this.messages = [...this.messages, newMessage]
-      this.$socket.emit("sendNewMessage", newMessage)
+      this.$socket.emit('sendNewMessage', newMessage)
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
           roomId: this.currentConversation.roomId,
           news: newMessage
         }
-      }) 
-      this.messageText = ""
+      })
+      this.messageText = ''
     },
     joinChatRoom() {
-      this.$socket.emit("join", this.currentConversation)
+      this.$socket.emit('join', this.currentConversation)
     },
     async getRecentNews(init = true) {
       /**
@@ -208,7 +239,7 @@ export default {
         if (data.success) {
           this.isLoading = false
           data.data.reverse()
-          
+
           this.messages = [...data.data, ...this.messages]
           if (data.data.length < this.pageSize) {
             this.hasMore = false
@@ -245,7 +276,7 @@ export default {
     /**聊天内容输入框自动聚焦 */
     chatInpAutoFocus() {
       this.$nextTick(() => {
-        this.$refs.chatInp.focus();
+        this.$refs.chatInp.focus()
       })
     }
   },
@@ -264,37 +295,38 @@ export default {
         this.page = 0
         this.scrollBottom = true
         this.setLoading(true)
-        this.messageText = ""
+        this.messageText = ''
         this.messages = []
         this.hasMore = true
         this.joinChatRoom()
         this.getRecentNews()
         this.datetamp = Date.now()
       }
-    }, deep: true, immediate: true
+    },
+    deep: true,
+    immediate: true
   },
   created() {
     console.log('chatArea created')
     //点击文档，将表情包和上传弹窗关闭
     //document.addEventListener('click', this.handlerShowEmoji)
     this.getRecentNews()
-    this.$eventBus.$on('receiveMessage', (data) => {
+    this.$eventBus.$on('receiveMessage', data => {
       this.receiveMessage(data)
     })
-    this.$eventBus.$on('sendPic', (data) => {
+    this.$eventBus.$on('sendPic', data => {
       this.sendPicFile(data, MSG_TYPES.img)
     })
-    this.$eventBus.$on('sendFile', (data) => {
+    this.$eventBus.$on('sendFile', data => {
       this.sendPicFile(data, MSG_TYPES.file)
     })
   },
-  mounted() {
-  },
+  mounted() {},
   beforeDestroy() {
     console.log('chatArea BeforeDestroy')
     //document.removeEventListener('click', this.handlerShowEmoji)
-  },
-};
+  }
+}
 </script>
 
 <style lang="scss">
@@ -334,7 +366,7 @@ export default {
     }
     .group-desc {
       width: 0%;
-    } 
+    }
   }
   .message-edit-container {
     box-sizing: border-box;
@@ -375,7 +407,7 @@ export default {
       padding: 0 10px;
       border: 0;
       border-radius: 5px;
-      background-color: #e9ebee;
+      background-color: #eeeeee;
       padding: 10px;
       resize: none;
       img {

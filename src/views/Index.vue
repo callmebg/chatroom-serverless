@@ -37,21 +37,15 @@
 import ConversationList from '@/views/conversation/ConversationList'
 import ChatArea from '@/views/chat/ChatArea'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
-import { fromatTime, saveRecentConversationToLocal } from '@/utils'
 import chatSvg from '@/SVGComponents/chat'
 // import AMap from '@/components/customMap'
+import {swapRoomId} from '@/utils'
 export default {
   name: 'Home',
   data() {
     return {
       currentConversation: {},
-      loading: false,
-      matterLevelMap: { 
-        'danger': '紧急事项' ,
-        'warning': '重要事项' ,
-        'normal': '一般事项' ,
-        'info': '不重要事项'
-      }
+      loading: false
     }
   },
   computed: {
@@ -72,7 +66,7 @@ export default {
         try {
           if(newVal.roomId !== oldVal.roomId) {
             this.$store.dispatch('news/SET_UNREAD_NEWS', {
-              roomId: this.currentConversation && this.currentConversation.roomId,
+              roomId: this.currentConversation && swapRoomId(this.currentConversation.roomId),
               count: 0,
               type: SET_UNREAD_NEWS_TYPE_MAP.clear
             })
@@ -81,10 +75,10 @@ export default {
             this.$store.dispatch('app/SET_RECENT_CONVERSATION', {type: 'add', data: newVal})
             // 将该会话下的消息设置为已读begin
             newVal.conversationType === "FRIEND" && this.$http.userIsReadMsg({
-              roomId: newVal.roomId, userId: this.userInfo._id
+              roomId: newVal.roomId
             }).then(res => {
               // 用户切换会话来阅读消息
-              if (res.status >= 400 || res.data.status !== 2000) return
+              if (!res.data.success) return
               this.$socket.emit('isReadMsg', {
                 roomId: newVal.roomId,
                 status: true
@@ -97,8 +91,6 @@ export default {
               } // 2. 提示对方用户退出该会话
               // end
             })
-            // 将该会话下的消息设置为已读end
-            saveRecentConversationToLocal(newVal)
           }
         } catch (error) {
           console.log('errrrr', error)

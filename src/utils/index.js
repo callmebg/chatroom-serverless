@@ -29,6 +29,18 @@ export function getFirstScrollElement(el, direction = "vertical") {
 }
 
 /**
+ * 私聊返回id交换，群聊返回自己
+ */
+ export function swapRoomId(roomId) {
+  if(typeof(roomId)=="number") {
+    return roomId
+  }
+  var two = roomId.split('-')
+  if (two.length == 2) {
+    return two[1] + '-' + two[0]
+  } 
+}
+/**
  * 格式化时间
  * @param {Date} time 
  * @param {Boolean} full 
@@ -226,18 +238,6 @@ const saveGroup = (id) => {
   storage.setItem('coMessager-recentConversation-group', recentStr)
 }
 
-/**
- * 将最近会话保存到localStorage
- * @param {Object} data 
- */
-export const saveRecentConversationToLocal = (data) => {
-  if (data.conversationType === 'FRIEND') {
-    saveFriend(data._id)
-  } else if (data.conversationType === 'GROUP') {
-    saveGroup(data.groupId._id)
-  }
-  
-}
 
 /**
  * 数组去重
@@ -319,13 +319,6 @@ export const localImgToBase64 = (fileDom) => {
   })
 }
 
-/**
- * 设置CSS
- * @param {*} theme 
- */
-export const setCSS = (theme) => {
-  
-}
 
 /**
  * 滚动到顶部

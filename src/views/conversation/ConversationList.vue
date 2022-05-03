@@ -2,36 +2,40 @@
   <div class="conversationlist-com">
     <div
       class="search"
-      :style="device === 'Mobile' ? {marginLeft: '50px'} : {}"
+      :style="device === 'Mobile' ? { marginLeft: '50px' } : {}"
     >
       <top-search />
     </div>
-    <el-tabs type="border-card" :stretch="true">
-      <el-tab-pane>
-        <span slot="label"><i class="el-icon-chat-line-round"></i></span>
-        <recent-conversation-list
-          :current-conversation="currentConversation"
-          :set-current-conversation="setCurrentConversation"
-          @setCurrentConversation="setCurrentConversation"
-        />
-      </el-tab-pane>
-      <el-tab-pane label="好友">
-        <span slot="label"><i class="el-icon-user"></i></span>
-        <fenzu-conversation-list
-          :current-conversation="currentConversation"
-          :set-current-conversation="setCurrentConversation"
-          @setCurrentConversation="setCurrentConversation"
-        />
-      </el-tab-pane>
-      <el-tab-pane label="群">
-        <span slot="label"><i style="fontSize: 16px" class="icon-qunzu iconfont"></i></span>
-        <group-conversation-list
-          :current-conversation="currentConversation"
-          :set-current-conversation="setCurrentConversation"
-          @setCurrentConversation="setCurrentConversation"
-        />
-      </el-tab-pane>
-    </el-tabs>
+    <div class="border-card">
+      <el-tabs type="border-card" :stretch="true">
+        <el-tab-pane>
+          <span slot="label"><i class="el-icon-chat-line-round"></i></span>
+          <recent-conversation-list
+            :current-conversation="currentConversation"
+            :set-current-conversation="setCurrentConversation"
+            @setCurrentConversation="setCurrentConversation"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="好友">
+          <span slot="label"><i class="el-icon-user"></i></span>
+          <fenzu-conversation-list
+            :current-conversation="currentConversation"
+            :set-current-conversation="setCurrentConversation"
+            @setCurrentConversation="setCurrentConversation"
+          />
+        </el-tab-pane>
+        <el-tab-pane label="群">
+          <span slot="label"
+            ><i style="fontSize: 16px" class="icon-qunzu iconfont"></i
+          ></span>
+          <group-conversation-list
+            :current-conversation="currentConversation"
+            :set-current-conversation="setCurrentConversation"
+            @setCurrentConversation="setCurrentConversation"
+          />
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </div>
 </template>
 
@@ -41,11 +45,8 @@ import recentConversationList from './RecentConversation'
 import fenzuConversationList from './FenzuConversation'
 import groupConversationList from './GroupConversation'
 import topSearch from './TopSearch'
-import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
-import { conversationTypes } from '@/const'
-import { saveMyFriendsToLocalStorage, saveMyGroupToLocalStorage } from '@/utils'
 export default {
-  name: "ConversationListComponent",
+  name: 'ConversationListComponent',
   props: {
     currentConversation: Object,
     setCurrentConversation: Function
@@ -74,10 +75,12 @@ export default {
     }
   },
   computed: {
-    userInfo() { // 用户信息
+    userInfo() {
+      // 用户信息
       return this.$store.state.user.userInfo
     },
-    friendFenzu() { // 获取所有分组 [分组1， 分组2]
+    friendFenzu() {
+      // 获取所有分组 [分组1， 分组2]
       return Object.keys(this.$store.state.user.fenzu)
     },
     device() {
@@ -85,9 +88,10 @@ export default {
     }
   },
   methods: {
-    joinChatRoom() { // 发送websocket消息，将会话列表加入房间
+    joinChatRoom() {
+      // 发送websocket消息，将会话列表加入房间
       this.conversationList.forEach(item => {
-        this.$socket.emit("join", item)
+        this.$socket.emit('join', item)
       })
     }
   },
@@ -96,20 +100,22 @@ export default {
     fenzuConversationList,
     groupConversationList,
     topSearch
-  },
+  }
 }
 </script>
 
 <style lang="scss">
 @import './../../../static/css/var.scss';
 .conversationlist-com {
-  height: 100%;
   padding: 0 5px;
   .search {
     padding: 10px 0;
   }
+  .border-card {
+    background-color: #ffffff;
+  }
   .el-tabs.el-tabs--top.el-tabs--border-card {
-    height: calc(100% - 70px);
+    height: calc(100% - 10px);
     overflow-x: hidden;
     background-color: $normalbg;
     .el-tabs__header {
@@ -121,7 +127,7 @@ export default {
     }
     .el-tabs__content {
       padding: 0;
-      height: calc(100% - 40px);
+      height: calc(100% - 10px);
       background-color: $normalbg;
       // overflow: scroll;
       // overflow-x: hidden;
@@ -141,4 +147,3 @@ export default {
   }
 }
 </style>
-

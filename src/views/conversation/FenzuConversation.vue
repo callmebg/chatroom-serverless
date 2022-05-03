@@ -267,7 +267,7 @@ export default {
 
 <style lang="scss">
 .fenzu-conversation-list {
-  height: 461px;
+  height: 540px;
   overflow-x: hidden;
 }
 </style>

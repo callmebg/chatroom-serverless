@@ -99,7 +99,7 @@ export default {
 .recent-conversation-list {
   @import './../../../static/css/animation.scss';
   position: relative;
-  height: 510px;
+  height: 540px;
   overflow-x: hidden;
   .empty {
     text-align: center;

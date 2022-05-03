@@ -26,12 +26,6 @@
         </template>
       </bearing-model>
     </transition>
-    <message-text-menu
-      v-if="isShowMsgTextMenu"
-      :message="currentMessage"
-      :left="msgTextMenuLeft"
-      :top="msgTextMenuTop"
-    />
   </div>
 </template>
 
@@ -42,7 +36,6 @@ import fenzuModel from '@/components/fenzuModel'
 import remarkModel from '@/components/remarkModel'
 import createGroup from '@/components/createGroup'
 import bearingModel from '@/components/bearingModel'
-import messageTextMenu from '@/components/messageTypes/messageTextMenu'
 import { conversationTypes } from '@/const'
 export default {
   data() {
@@ -52,7 +45,6 @@ export default {
       isShowFenzuModel: false,
       isShowRemarkModel: false,
       isShowCreateGroup: false,
-      isShowMsgTextMenu: false,
       currentConversation: {}, // 当前操作的会话
 
       currentMessage: {}, // 当前操作的消息
@@ -148,20 +140,12 @@ export default {
       this.showModel = show
       this.isShowCreateGroup = show
     })
-    this.$eventBus.$on('toggleMsgTextMenu', e => {
-      const { show, data, left, top } = e
-      this.isShowMsgTextMenu = show
-      this.currentMessage = data
-      this.msgTextMenuLeft = left
-      this.msgTextMenuTop = top
-    })
   },
   components: {
     infoModel,
     fenzuModel,
     remarkModel,
     createGroup,
-    messageTextMenu,
     bearingModel
   }
 }

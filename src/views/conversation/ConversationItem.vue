@@ -43,8 +43,8 @@
       <div class="conversation-info" @contextmenu.prevent.stop="showMenu">
         <div class="wrapper">
           <el-badge
-            :value="unreadNews[conversationInfo.roomId]"
-            :hidden="unreadNews[conversationInfo.roomId] === 0"
+            :value="unreadNews[friendRoomId]"
+            :hidden="unreadNews[friendRoomId] === 0"
             class="item el-badge"
           >
             <el-avatar
@@ -82,7 +82,7 @@
 </template>
 
 <script>
-import { formatDateToZH, arrUnique, findParentNode } from '@/utils'
+import { formatDateToZH, arrUnique, swapRoomId } from '@/utils'
 import { MSG_TYPES } from '@/const'
 import conversationMenu from './Menu'
 const conversationObj = {
@@ -126,6 +126,9 @@ export default {
     }
   },
   computed: {
+    friendRoomId() {
+      return swapRoomId(this.conversationInfo.roomId)
+    },
     unreadNews() {
       return this.$store.state.news.unreadNews
     },
@@ -134,8 +137,7 @@ export default {
       const MSG_TYPE_TEXT = {
         [MSG_TYPES.text]: lastNewsObj.message || '',
         [MSG_TYPES.img]: '[图片]',
-        [MSG_TYPES.file]: '[文件]',
-        [MSG_TYPES.sys]: '[系统消息]',
+        [MSG_TYPES.file]: '[文件]'
       }
       return MSG_TYPE_TEXT[lastNewsObj.messageType] || ''
     },
