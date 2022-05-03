@@ -10,7 +10,7 @@
       :src="messageitem.senderId === userInfo.user_id ? IMG_URL + userInfo.user_profile : IMG_URL + messageitem.senderAvatar"
       @error="() => true"
     >
-      <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt srcset>
+      <img src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" alt srcset/>
     </el-avatar>
     <div
       :class="device === 'Mobile' ? 'message-info mobile' : 'message-info'"

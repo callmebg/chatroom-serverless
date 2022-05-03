@@ -172,7 +172,8 @@ export default {
         this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:0, decision_status: 1})
         this.$eventBus.$emit('changeFriend')
       } else if (item.validateType === 1) {
-        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 1, decision_group: item.groupId})        
+        this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 1, decision_group: item.groupId})
+        this.$eventBus.$emit('changeGroup')        
       }
       this.isAdding = false
       this.$eventBus.$emit('changeSystemNews')
@@ -185,6 +186,7 @@ export default {
         this.$socket.emit('dealValidate', {decision_id: item._id, decision_from: item.senderId, decision_to: item.recipientId, decision_type:1, decision_status: 2})        
       }
       this.isAdding = false
+      this.$eventBus.$emit('changeSystemNews')
     }
   }
 }

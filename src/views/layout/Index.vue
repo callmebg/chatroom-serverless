@@ -74,7 +74,7 @@
       class="mobile-menu"
       @click.stop="toggleAside"
     >
-      <img :src="IMG_URL + userInfo.photo" alt="" srcset="" />
+      <img :src="IMG_URL + userInfo.user_profile" alt="" srcset="" />
     </div>
   </div>
 </template>
@@ -84,8 +84,8 @@ import { mapState } from 'vuex'
 import myAside from './components/Aside'
 import { saveRecentConversationToLocal } from '@/utils'
 import { SET_UNREAD_NEWS_TYPE_MAP } from '@/store/constants'
-import theme from '@/components/theme'
 import NotifyAudio from './../../../static/audio/notify.mp3'
+import { MSG_TYPES } from '@/const'
 
 const systemPictureMap = {
   abstract: require('./../../../static/image/theme/abstract.jpg'),
@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       include: ['Home'], // keepAlive缓存相关
-      bgImgUrl: '',
+      bgImgUrl: '/static/image/theme/ocean.jpg',
       NotifyAudio: NotifyAudio,
       showTheme: false,
       showMain: true, // 聊天区域是否展示
@@ -125,26 +125,10 @@ export default {
     }
   },
   watch: {
-    bgImg: {
-      handler(bgImg) {
-        /**如果是base64就直接使用否则从系统自带图片获取 */
-        this.bgImgUrl = '/static/image/ocean1.jpg'
-        /*
-        if (bgImg.includes('base64')) {
-          this.bgImgUrl = bgImg
-        } else {
-          this.bgImgUrl = systemPictureMap[bgImg]
-        }
-        */
-      },
-      deep: true,
-      immediate: true
-    },
     $route(to, from) {
       const include = this.include
       //如果 要 to(进入) 的页面是需要 keepAlive 缓存的，把 name push 进 include数组
       if (to.meta.keepAlive) {
-        // !include.includes('Layout') && include.push('Layout')
         !include.includes(to.name) && include.push(to.name)
       }
       //如果 要 form(离开) 的页面是 keepAlive缓存的，
@@ -157,9 +141,7 @@ export default {
     }
   },
   components: {
-    myAside,
-    theme
-    // chatView
+    myAside
   },
   methods: {
     /**
@@ -197,7 +179,10 @@ export default {
     receiveMessage(news) {
       this.$refs['audio'].play()
       console.log('收到新消息', news)
-      const message = news.message ? news.message.slice(0, 10) : ''
+      var message = news.messageType
+      if(news.messageType == MSG_TYPES.text) {
+        message = news.message ? news.message.slice(0, 10) : ''
+      }
       // 自己发的信息回显就不用提示辣
       if(news.senderId != this.userInfo.user_id) {
         this.$notify({

@@ -78,7 +78,7 @@ export default {
       console.log(data)
       this.$eventBus.$emit('toggleCreateGroup', { show: false })
       if (data.success) {
-        this.$eventBus.$emit('createGroupSuccess')
+        this.$eventBus.$emit('changeGroup')
         this.$alert(`创建成功！`, '提示')
       } else {
         this.$message({ type: 'error', message: '创建群失败！' })

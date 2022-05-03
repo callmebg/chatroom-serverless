@@ -1,8 +1,6 @@
 import axios from "axios";
 import { Message } from "element-ui";
-import { isProduction } from "./index";
-import router from "./../router";
-import { getCookie, setCookie, removeCookie } from "./token";
+import { getCookie } from "./token";
 let instance = axios.create({
   timeout: 3000,
   baseURL: process.env.API_URL

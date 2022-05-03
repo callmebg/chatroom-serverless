@@ -10,7 +10,6 @@ import 'normalize.css/normalize.css'
 import 'mavon-editor/dist/css/index.css'
 import App from './App'
 import router from './router'
-import Toast from './components/toast/main.js'
 import axios from './api'
 import store from './store'
 import directives from './directives'
@@ -47,7 +46,6 @@ VueAMap.initAMapApiLoader({
 Object.keys(directives).forEach(i => Vue.directive(i, directives[i]))
 
 Vue.config.productionTip = false
-Vue.prototype.$toast = Toast
 Vue.prototype.$http = axios
 Vue.prototype.$eventBus = new Vue()
 Vue.prototype.$socket = SocketService.getInstance()

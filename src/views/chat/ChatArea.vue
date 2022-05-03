@@ -4,11 +4,6 @@
       :currentConversation="currentConversation"
       :set-current-conversation="setCurrentConversation"
     />
-    <transition name="slide-up">
-      <div class="history-msg-container" v-if="showHistoryMsg">
-        <history-msg :current-conversation="currentConversation" />
-      </div>
-    </transition>
     <div :class="currentConversation.conversationType !== 'GROUP' ? 'main no-group' : 'main'">
       <div class="message-list-container">
         <message-list ref='messagelist'
@@ -31,22 +26,7 @@
       <div class="send-type">
         <i class="item iconfont icon-emoji" @click.stop="showEmojiCom = !showEmojiCom"></i>
         <i class="item el-icon-picture" @click.stop="showUpImgCom = !showUpImgCom" />
-        <label for="upfile">
-          <el-tooltip class="item" effect="dark" content="只能上传小于 2M 的文件" placement="top">
-            <i class="item el-icon-folder">
-              <input
-                id="upfile"
-                class="file-inp upload"
-                type="file"
-                title="选择文件"
-                @change="fileInpChange"
-              >
-            </i>
-          </el-tooltip>
-        </label>
-        <span
-          :class="showHistoryMsg ? 'history-btn normal-font el-icon-caret-bottom' : 'history-btn normal-font el-icon-caret-top'"
-          @click="setShowHistoryMsg">历史记录</span>
+        <i class="item el-icon-folder" @click.stop="showUpFileCom = !showUpFileCom"/>
       </div>
       <div class="operation">
         <el-button @click="send" type="success" size="small" round>发送</el-button>
@@ -57,15 +37,10 @@
       </div>
       <textarea ref="chatInp" class="textarea" v-model="messageText" maxlength="200" @input="scrollBottom = true" @keydown.enter="send($event)"></textarea>
       <transition name="fade">
-        <up-img
-          v-if="showUpImgCom"
-          class="emoji-component"
-          :token="token"
-          @getStatus="getImgUploadResult"
-          @getLocalUrl="getLocalUrl"
-          :get-status="getImgUploadResult"
-          :get-local-url="getLocalUrl"
-        />
+        <up-file v-if="showUpFileCom" class="emoji-component"/>
+      </transition>
+      <transition name="fade">
+        <up-img v-if="showUpImgCom" class="emoji-component"/>
       </transition>
       <transition name="fade">
         <custom-emoji v-if="showEmojiCom" class="emoji-component" @addemoji="addEmoji" />        
@@ -76,16 +51,14 @@
 
 <script>
 import { mapState } from "vuex"
-import { cloneDeep } from 'lodash'
-import { fromatTime } from "@/utils"
 import chatHeader from "./components/Header"
 import messageList from "./components/MessageList"
 import { SET_UNREAD_NEWS_TYPE_MAP } from "@/store/constants"
-import { conversationTypes, uploadImgStatusMap, qiniu_URL } from '@/const'
+import { conversationTypes, MSG_TYPES } from '@/const'
 import customEmoji from '@/components/customEmoji'
 import upImg from '@/components/customUploadImg'
+import upFile from '@/components/customUploadFile'
 import groupDesc from './components/GroupDesc'
-import historyMsg from './components/HistoryMsg'
 import xss from '@/utils/xss'
 export default {
   props: {
@@ -99,7 +72,7 @@ export default {
       messages: [],
       showEmojiCom: false,
       showUpImgCom: false,
-      token: '', // 上传七牛云所需token
+      showUpFileCom: false,
       page: 0,
       pageSize: 15,
       hasMore: true,
@@ -108,7 +81,6 @@ export default {
       isLoading: false,
       useAnimation: false,
       lastEnterTime: Date.now(), // 对方进入该会话的时间
-      showHistoryMsg: false,
       datetamp: Date.now() // 切换群聊重新强制加载群聊详情
     }
   },
@@ -153,9 +125,6 @@ export default {
     test(e) {
       console.log(e, 123132)
     },
-    setShowHistoryMsg() {
-      this.showHistoryMsg = !this.showHistoryMsg
-    },
     /**最后进入该会话的时间 */
     setLastEnterTime(time) {
       this.lastEnterTime = time
@@ -170,73 +139,18 @@ export default {
         currentConversation: this.currentConversation,
       }
     },
-    getImgUploadResult(res) {
-      const { guid } = res // 图片的唯一标识
-      const msgListClone = cloneDeep(this.messages)
-      if (res.status === uploadImgStatusMap.error) {
-        this.$message.error('图片上传失败！')
-        return
-      }
-      if (res.status === uploadImgStatusMap.next) {
-        const percent = Number((res.data && res.data.total && res.data.total.percent) || 0).toFixed(2)
-        const loaded = (res.data && res.data.total && res.data.total.loaded) || 0
-        const size = (res.data && res.data.total && res.data.total.size) || 0
-        console.log(`图片大小：${size}，已上传：${loaded}，百分比：${percent}`)
-        msgListClone.forEach(item => {
-          if (item.guid === guid) {
-            item.uploadPercent = Number(percent)
-          }
-        })
-        this.messages = msgListClone
-        return
-      }
-      if (res.status === uploadImgStatusMap.complete) {
-        const imgKey = res.data.key
-        let img_URL = ''
-        if ((imgKey || '').includes('/uploads/')) {
-          img_URL = process.env.IMG_URL + imgKey
-        } else {
-          img_URL = qiniu_URL + imgKey
-        }
-        // const img_URL = qiniu_URL + res.data.key
-        const common = this.generatorMessageCommon()
-        const newMessage = {
-          ...common,
-          message: img_URL,
-          messageType: "img", // emoji/text/img/file/sys/artboard/audio/video
-        }
-        msgListClone.forEach(item => {
-          if (item.guid === guid) {
-            item.uploading = false
-            delete item.uploadPercent
-          }
-        })
-        this.messages = msgListClone
-        this.$socket.emit("sendNewMessage", newMessage)
-        this.$store.dispatch('news/SET_LAST_NEWS', {
-          type: 'edit',
-          res: {
-            roomId: this.currentConversation.roomId,
-            news: newMessage
-          }
-        })
-        this.messageText = ""
-      }
-    },
     /**
-     * 直接获取本地的地址
+     * 发送图片文件
      */
-    getLocalUrl(url, guid) {
-      // return
+    sendPicFile(url, type) {
       const common = this.generatorMessageCommon()
       const newMessage = {
         ...common,
-        uploading: true,
-        guid,
         message: url,
-        messageType: "img",
+        messageType: type,
       }
-      this.messages = [...this.messages, newMessage]
+      //this.messages = [...this.messages, newMessage]
+      this.$socket.emit("sendNewMessage", newMessage)
       this.$store.dispatch('news/SET_LAST_NEWS', {
         type: 'edit',
         res: {
@@ -244,9 +158,6 @@ export default {
           news: newMessage
         }
       })
-    },
-    fileInpChange(e) {
-
     },
     addEmoji(emoji = '') {
       this.messageText += emoji
@@ -344,7 +255,7 @@ export default {
     customEmoji,
     groupDesc,
     upImg,
-    historyMsg
+    upFile
   },
   watch: {
     currentConversation(newVal, oldVal) {
@@ -352,7 +263,6 @@ export default {
         this.chatInpAutoFocus()
         this.page = 0
         this.scrollBottom = true
-        this.showHistoryMsg = false
         this.setLoading(true)
         this.messageText = ""
         this.messages = []
@@ -365,17 +275,24 @@ export default {
   },
   created() {
     console.log('chatArea created')
-    document.addEventListener('click', this.handlerShowEmoji)
+    //点击文档，将表情包和上传弹窗关闭
+    //document.addEventListener('click', this.handlerShowEmoji)
     this.getRecentNews()
     this.$eventBus.$on('receiveMessage', (data) => {
       this.receiveMessage(data)
+    })
+    this.$eventBus.$on('sendPic', (data) => {
+      this.sendPicFile(data, MSG_TYPES.img)
+    })
+    this.$eventBus.$on('sendFile', (data) => {
+      this.sendPicFile(data, MSG_TYPES.file)
     })
   },
   mounted() {
   },
   beforeDestroy() {
     console.log('chatArea BeforeDestroy')
-    document.removeEventListener('click', this.handlerShowEmoji)
+    //document.removeEventListener('click', this.handlerShowEmoji)
   },
 };
 </script>

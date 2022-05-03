@@ -63,12 +63,6 @@ export default {
   components: {
     validateNews
   },
-  sockets: {
-    receiveValidateMessage(data) {
-      console.log('在system页面接收新的验证消息：', data)
-      this.validateNewsList = [...this.validateNewsList, data]
-    }
-  },
   created() {
     // this.$http.getMyValidateNews()
     this.$eventBus.$on('changeSystemNews', () => {

@@ -107,7 +107,7 @@ export default {
   },
   created() {
     this.getMyGroup()
-    this.$eventBus.$on('createGroupSuccess', () => {
+    this.$eventBus.$on('changeGroup', () => {
       this.getMyGroup()
     })
   }

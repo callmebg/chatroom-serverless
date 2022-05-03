@@ -6,7 +6,7 @@
         alt="图片地址"
         class="img-content"
         @error="handlerError"
-        :src="img_url"
+        :src="IMG_URL+img_url"
         :style="`transform:scale(${scale}) rotateZ(${rotate}deg)`"
         @load="load"
       >
@@ -16,6 +16,7 @@
       <span
         class="oper-item close"
         title="关闭"
+        @click="handlerClick"
       />
       <span
         class="oper-item el-icon-plus plus"
@@ -80,6 +81,7 @@ export default {
   },
   data() {
     return {
+      IMG_URL: process.env.IMG_URL,
       error: false,
       img_url: '',
       currImgIndex: 0,
@@ -136,13 +138,9 @@ export default {
     }
   },
   created() {
-    document.addEventListener('click', this.handlerClick)
     const currImgIndex = (this.imgList || []).findIndex(item => item === this.currentImg)
     this.img_url = this.currentImg
     this.currImgIndex = currImgIndex === -1 ? 1 : currImgIndex + 1
-  },
-  beforeDestroy() {
-    document.removeEventListener('click', this.handlerClick)
   },
 }
 </script>

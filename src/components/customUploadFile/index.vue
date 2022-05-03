@@ -1,21 +1,21 @@
 <template>
-  <div class="custom-upload-img-com">
-    <div class="upload-img-com-wrapper">
+  <div class="custom-upload-file-com">
+    <div class="upload-file-com-wrapper">
       <el-alert
-        title="只能发送小于 2M 的图片"
-        type="warning"
+        title="只能发送小于 20M 的文件"
+        type="info"
         effect="dark"
         :closable="false"
       />
       <div class="option">
-        <label for="up-to-img">
-          <i class="option-item ok el-icon-picture">点击上传图片
+        <label for="up-to-file">
+          <i class="option-item ok el-icon-picture"
+            >点击上传文件
             <input
-              id="up-to-img"
+              id="up-to-file"
               class="img-inp upload"
               type="file"
-              title="选择图片"
-              accept="image/png, image/jpeg, image/gif, image/jpg"
+              title="选择文件"
               @change="uploadTx"
             />
           </i>
@@ -32,7 +32,7 @@
 
 <script>
 /**
- * 上传图片组件
+ * 上传文件组件
  */
 import { genGuid } from '@/utils'
 export default {
@@ -53,14 +53,14 @@ export default {
       // return
       const fileType = file.type && file.type.split('/')[1]
       const fileSize = file.size / 1024 / 1024
-      if (fileSize > 2) {
-        this.$message.error('只能上传小于2M的图片！换一个小图片试试吧~~')
+      if (fileSize > 20) {
+        this.$message.error('只能上传小于20M的文件！换一个小文件试试吧~~')
         return
       }
       var key =
         '/profile/' +
         this.$store.state.user.userInfo.user_account +
-        '/chatPic/' +
+        '/chatFile/' +
         guid +
         file.name
       var that = this
@@ -79,10 +79,10 @@ export default {
         function(err, data) {
           console.log(err || data)
           if (data.statusCode == 200) {
-            that.$message('图片上传成功')
-            that.$eventBus.$emit('sendPic', key)
+            that.$message('文件上传成功')
+            that.$eventBus.$emit('sendFile', key)
           } else {
-            that.$message.warning('图片上传失败')
+            that.$message.warning('文件上传失败')
           }
         }
       )
@@ -92,10 +92,10 @@ export default {
 </script>
 
 <style lang="scss">
-.custom-upload-img-com {
+.custom-upload-file-com {
   width: 270px;
   background-color: #fff;
-  .upload-img-com-wrapper {
+  .upload-file-com-wrapper {
     padding: 10px;
     .option {
       margin-top: 10px;

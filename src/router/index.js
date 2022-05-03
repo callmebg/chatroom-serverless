@@ -64,14 +64,6 @@ const router = new Router({
           meta: {
             requiresAuth: true
           }
-        },
-        {
-          path: 'schedule',
-          name: 'Schedule',
-          component: () => import('@/views/Schedule'),
-          meta: {
-            requiresAuth: true
-          }
         }
       ]
     },

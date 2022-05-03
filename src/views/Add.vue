@@ -160,11 +160,8 @@ export default {
 
 <style lang="scss">
 .add-page {
-  width: 840px;
-  height: 100%;
-  padding: 10px 10px;
-  overflow-y: scroll;
-  // margin: 0 auto;
+  padding: 20px 20px;
+  overflow-y: auto;
   .header {
     .search-area {
       display: flex;
@@ -180,7 +177,6 @@ export default {
       background-color: #fff;
       border-radius: 3px;
       min-height: 250px;
-      width: 800px;
       padding: 10px;
       .description {
         margin-bottom: 10px;

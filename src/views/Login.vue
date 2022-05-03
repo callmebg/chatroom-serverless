@@ -111,9 +111,7 @@
 </template>
 
 <script>
-import ocean1 from './../../static/image/ocean1.jpg'
-import { createCanvas } from '@/utils/cvcode'
-import canvasImg from './../../static/image/canvas2.jpg'
+import ocean1 from './../../static/image/theme/ocean.jpg'
 import { accountReg, passwordReg } from '@/utils/index'
 import copyRight from '@/components/copyright'
 import COS from 'cos-js-sdk-v5'
@@ -239,23 +237,6 @@ export default {
         } else {
           this.$message.error(message)
         }
-      })
-    },
-    getCVCode() {
-      // 获取验证码
-      this.cvCodeing = true
-      this.$http.getCVCode().then((res) => {
-        let { data, status, timestamp } = res.data
-        this.cvCode = data
-        this.loginInfo.cvCodeTimestamp = timestamp
-        this.$nextTick(() => {
-          const currCanvas = this.isLoginState
-            ? this.$refs.loginCanvas
-            : this.$refs.registerCanvas
-          createCanvas(this.cvCode, currCanvas, canvasImg, () => {
-            this.cvCodeing = false
-          })
-        })
       })
     },
     changeState(flag) {

@@ -1,15 +1,7 @@
 <template>
   <div class="message-type__img">
-    <img v-show="!imgLoading" height="200" style="cursor: zoom-in" :src="message.message" alt="图片加载失败" @load="load" @click="setshowPicturePreview(true)" @error="imgError">
+    <img v-show="!imgLoading" height="200" style="cursor: zoom-in" :src="IMG_URL+message.message" alt="图片加载失败" @load="load" @click="setshowPicturePreview(true)" @error="imgError">
     <div v-if="imgLoading" class="img-loading-tips"></div>
-    <div v-if="message.uploading && !message.uploadPercent" class="all0 img-cover">图片上传中...</div>
-    <div v-if="message.uploadPercent" class="all0 img-cover progress">
-    <!-- <div class="all0 img-cover progress"> -->
-      <div class="content">
-        <el-progress :width="50" type="circle" :percentage="message.uploadPercent"></el-progress>
-        <!-- <el-progress :width="50" type="circle" :percentage="23"></el-progress> -->
-      </div>
-    </div>
     <transition name="fade">
       <picture-preview
         v-if="showPicturePreview"
@@ -29,6 +21,7 @@ export default {
   props: ['message', 'imgTypeMsgList'],
   data() {
     return {
+      IMG_URL: process.env.IMG_URL,
       showPicturePreview: false,
       imgLoading: true
     }

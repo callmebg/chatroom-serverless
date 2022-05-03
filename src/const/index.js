@@ -21,48 +21,11 @@ export const validateNewsTips = {
 
 export const qiniu_URL = 'http://blog.static.chenr.cn/'
 
-// 七牛云上传图片时的状态
+// 上传图片时的状态
 export const uploadImgStatusMap = {
   error: 'error',
   next: 'next',
   complete: 'complete'
-}
-
-
-export const weatherMap = {
-  "阴": 'icon-tianqi',
-  "多云": 'icon-tianqi1',
-  "晴": 'icon-ziyuan',
-  "小雨下雨": 'icon-n1'
-}
-
-export const weekNumZHMap = {
-  "0": '星期天',
-  "1": '星期一',
-  "2": '星期二',
-  "3": '星期三',
-  "4": '星期四',
-  "5": '星期五',
-  "6": '星期六',
-}
-
-export const commentTips = "黑猫警长提示您文明发言"
-
-export const defaultPyqItem = {
-  pictures: [
-    'http://blog.static.chenr.cn/cc-messger-1702f38162c-92.jpeg'
-  ],
-  readCount: 0,
-  _id: "5e3ea3518160c54408d9ba13",
-  userId: {
-    photo: "/uploads/2019-11-10/f-1573390856438-f1573390856092.png",
-    signature: "signature",
-    nickname: "nickname",
-    _id: "5d9d903f49db3825a8e76a03"
-  },
-  createDate: new Date(),
-  content: "content",
-  __v: 0,
 }
 
 export const MSG_TYPES = {
