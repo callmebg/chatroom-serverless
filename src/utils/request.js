@@ -9,7 +9,7 @@ let instance = axios.create({
 instance.interceptors.request.use(
   config => {
     const token = getCookie();
-    if (token) {
+    if (token) { // 若存在token，将token添加至请求头
       config.headers.Authorization = token;
     }
     return config;
@@ -19,16 +19,10 @@ instance.interceptors.request.use(
   }
 );
 
-// 成功：2000，失败（无数据）：2001，未登录：2002，服务端错误：2003
-// 登录成功：1000，登录失败（账号或密码错误）：1001，验证码错误：1002
-// 用户已被注册:1003,注册失败:1004,注册成功:1005,用户验证过期：1006
-// 验证码过期：1007
 instance.interceptors.response.use(
   response => {
       console.log(response)
-      
-      // TODO 统一拦截，还没想好
-      if(!response.data.success) {
+      if(!response.data.success) { // 若业务逻辑不成功，给出提示
         Message({
           message: response.data.message,
           type: "warning",

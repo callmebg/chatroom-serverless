@@ -1,4 +1,3 @@
-import { Message } from "element-ui";
 export default class SocketService {
   /**
    * 单例
