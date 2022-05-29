@@ -284,7 +284,8 @@ export default {
       }
     },
     beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg' || file.type === 'image/png'
+      file = file.row
+      const isJPG = file.type == 'image/jpeg' || file.type == 'image/png'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
@@ -296,12 +297,9 @@ export default {
       return isJPG && isLt2M
     },
     changeFile(file, fileList) {
-      console.log('file')
+      console.log('file', file)
+      console.log('fileList', fileList)
       var picture = fileList[0].raw
-      console.log(picture)
-      if(!this.beforeAvatarUpload(fileList[0])) {
-        return
-      }
       var key =
         '/profile/' +
         this.$store.state.user.userInfo.user_account +

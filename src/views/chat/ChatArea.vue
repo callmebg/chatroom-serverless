@@ -57,7 +57,7 @@
         <el-button @click="send" type="success" size="small" round
           >发送</el-button
         >
-        <el-button @click="send" type="danger" size="small" round
+        <el-button @click="messageText=''" type="danger" size="small" round
           >清空</el-button
         >
       </div>
