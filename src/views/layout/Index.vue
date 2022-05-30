@@ -88,7 +88,6 @@ import { MSG_TYPES } from '@/const'
 
 const systemPictureMap = {
   abstract: require('./../../../static/image/theme/abstract.jpg'),
-  city: require('./../../../static/image/theme/city.jpg'),
   ocean: require('./../../../static/image/theme/ocean.jpg')
 }
 export default {
